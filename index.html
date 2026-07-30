@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalcPro - Free Online Calculators</title>
+    <meta name="description" content="Free online calculators: BMI, Scientific, Compound Interest, Mortgage, Temperature Converter">
+    <!-- Google AdSense placeholder - Replace with your publisher ID -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            background: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #555;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Calculator Sections */
+        .calculator-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .calculator-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .calc-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-calculate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-box h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .result-detail {
+            margin-top: 10px;
+            color: #666;
+        }
+
+        /* Ad Placements */
+        .ad-container {
+            background: #f8f9fa;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            min-height: 90px;
+        }
+
+        .ad-container p {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .ad-banner {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .ad-sidebar {
+            float: right;
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Scientific Calculator Specific */
+        .scientific-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .sci-btn {
+            padding: 15px;
+            background: #f0f2f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .sci-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .sci-btn.operator {
+            background: #e8e8ff;
+        }
+
+        .sci-btn.function {
+            background: #ffe8e8;
+        }
+
+        .sci-btn.equals {
+            background: #667eea;
+            color: white;
+        }
+
+        .sci-display {
+            background: #1a1a2e;
+            color: #00ff88;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5em;
+            text-align: right;
+            margin-bottom: 15px;
+            min-height: 60px;
+            word-wrap: break-word;
+        }
+
+        .sci-functions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a2e;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .calculator-section {
+                padding: 20px 15px;
+            }
+            
+            .scientific-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .sci-functions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            header p {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🧮 CalcPro</h1>
+            <p>Your Ultimate Free Online Calculator Suite</p>
+        </div>
+    </header>
+
+    <nav class="nav-bar">
+        <div class="container">
+            <div class="nav-links">
+                <a href="#bmi">BMI</a>
+                <a href="#scientific">Scientific</a>
+                <a href="#compound">Compound Interest</a>
+                <a href="#mortgage">Mortgage</a>
+                <a href="#temperature">Temperature</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Ad Banner - Top -->
+    <div class="container">
+        <div class="ad-banner">
+            <div class="ad-container">
+                <!-- Replace with your ad code -->
+                <p>📢 Ad Space - 728x90 Leaderboard</p>
+                <p>Replace with Google AdSense code</p>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+        <!-- 1. BMI Calculator -->
+        <section id="bmi" class="calculator-section">
+            <h2>📊 BMI Calculator</h2>
+            <p>Calculate your Body Mass Index and check your health status</p>
+            <div class="calc-grid">
+                <div>
+                    <div class="input-group">
+                        <label>Height (cm)</label>
+                        <input type="number" id="bmi-height" placeholder="e.g., 175" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Weight (kg)</label>
+                        <input type="number" id="bmi-weight" placeholder="e.g., 70" step="0.1">
+                    </div>
+                    <button class="btn-calculate" onclick="calculateBMI()">Calculate BMI</button>
+                </div>
+                <div>
+                    <div class="result-box" id="bmi-result" style="display: none;">
+                        <h3>Your BMI Result</h3>
+                        <div class="result-value" id="bmi-value"></div>
+                        <div class="result-detail" id="bmi-category"></div>
+                        <div class="result-detail" id="bmi-healthy-range"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ad Between Calculators -->
+        <div class="ad-banner">
+            <div class="ad-container">
+                <p>📢 Ad Space - Native Ad</p>
+            </div>
+        </div>
+
+        <!-- 2. Scientific Calculator -->
+        <section id="scientific" class="calculator-section">
+            <h2>🔬 Scientific Calculator</h2>
+            <p>Advanced calculator with trigonometric and logarithmic functions</p>
+            <div class="sci-display" id="sci-display">0</div>
+            <div class="sci-functions">
+                <button class="sci-btn function" onclick="sciFunction('sin')">sin</button>
+                <button class="sci-btn function" onclick="sciFunction('cos')">cos</button>
+                <button class="sci-btn function" onclick="sciFunction('tan')">tan</button>
+                <button class="sci-btn function" onclick="sciFunction('log')">log</button>
+                <button class="sci-btn function" onclick="sciFunction('ln')">ln</button>
+                <button class="sci-btn function" onclick="sciFunction('sqrt')">√</button>
+                <button class="sci-btn function" onclick="sciFunction('pow')">x²</button>
+                <button class="sci-btn function" onclick="sciFunction('pi')">π</button>
+            </div>
+            <div class="scientific-buttons">
+                <button class="sci-btn" onclick="sciInput('7')">7</button>
+                <button class="sci-btn" onclick="sciInput('8')">8</button>
+                <button class="sci-btn" onclick="sciInput('9')">9</button>
+                <button class="sci-btn operator" onclick="sciInput('÷')">÷</button>
+                <button class="sci-btn operator" onclick="sciClear()">C</button>
+                
+                <button class="sci-btn" onclick="sciInput('4')">4</button>
+                <button class="sci-btn" onclick="sciInput('5')">5</button>
+                <button class="sci-btn" onclick="sciInput('6')">6</button>
+                <button class="sci-btn operator" onclick="sciInput('×')">×</button>
+                <button class="sci-btn operator" onclick="sciBackspace()">⌫</button>
+                
+                <button class="sci-btn" onclick="sciInput('3')">3</button>
+                <button class="sci-btn" onclick="sciInput('2')">2</button>
+                <button class="sci-btn" onclick="sciInput('1')">1</button>
+                <button class="sci-btn operator" onclick="sciInput('-')">-</button>
+                <button class="sci-btn operator" onclick="sciInput('(')">(</button>
+                
+                <button class="sci-btn" onclick="sciInput('0')">0</button>
+                <button class="sci-btn" onclick="sciInput('.')">.</button>
+                <button class="sci-btn equals" onclick="sciCalculate()">=</button>
+                <button class="sci-btn operator" onclick="sciInput('+')">+</button>
+                <button class="sci-btn operator" onclick="sciInput(')')">)</button>
+            </div>
+        </section>
+
+        <!-- 3. Compound Interest Calculator -->
+        <section id="compound" class="calculator-section">
+            <h2>💰 Compound Interest Calculator</h2>
+            <p>See how your money can grow with compound interest</p>
+            <div class="calc-grid">
+                <div>
+                    <div class="input-group">
+                        <label>Initial Investment ($)</label>
+                        <input type="number" id="compound-principal" placeholder="e.g., 1000" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Annual Interest Rate (%)</label>
+                        <input type="number" id="compound-rate" placeholder="e.g., 5" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Time Period (years)</label>
+                        <input type="number" id="compound-time" placeholder="e.g., 10" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label>Compounding Frequency</label>
+                        <select id="compound-frequency">
+                            <option value="365">Daily</option>
+                            <option value="12" selected>Monthly</option>
+                            <option value="4">Quarterly</option>
+                            <option value="1">Annually</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Monthly Contribution ($)</label>
+                        <input type="number" id="compound-contribution" placeholder="e.g., 100" step="0.01" value="0">
+                    </div>
+                    <button class="btn-calculate" onclick="calculateCompoundInterest()">Calculate</button>
+                </div>
+                <div>
+                    <div class="result-box" id="compound-result" style="display: none;">
+                        <h3>Future Value</h3>
+                        <div class="result-value" id="compound-total"></div>
+                        <div class="result-detail">Total Interest Earned: <span id="compound-interest"></span></div>
+                        <div class="result-detail">Total Contributions: <span id="compound-contributions"></span></div>
+                        <div class="result-detail" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                            <strong>Year-by-Year Breakdown:</strong><br>
+                            <div id="compound-breakdown" style="margin-top: 10px; font-size: 0.9em; max-height: 200px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ad Between Calculators -->
+        <div class="ad-banner">
+            <div class="ad-container">
+                <p>📢 Ad Space - Native Ad</p>
+            </div>
+        </div>
+
+        <!-- 4. Mortgage Calculator -->
+        <section id="mortgage" class="calculator-section">
+            <h2>🏠 Mortgage Calculator</h2>
+            <p>Calculate your monthly mortgage payments and interest costs</p>
+            <div class="calc-grid">
+                <div>
+                    <div class="input-group">
+                        <label>Home Price ($)</label>
+                        <input type="number" id="mortgage-price" placeholder="e.g., 300000" step="1000">
+                    </div>
+                    <div class="input-group">
+                        <label>Down Payment ($)</label>
+                        <input type="number" id="mortgage-down" placeholder="e.g., 60000" step="1000">
+                    </div>
+                    <div class="input-group">
+                        <label>Loan Amount ($)</label>
+                        <input type="number" id="mortgage-loan" readonly style="background: #f0f2f5;">
+                    </div>
+                    <div class="input-group">
+                        <label>Interest Rate (%)</label>
+                        <input type="number" id="mortgage-rate" placeholder="e.g., 4.5" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Loan Term (years)</label>
+                        <select id="mortgage-term">
+                            <option value="15">15 years</option>
+                            <option value="20">20 years</option>
+                            <option value="30" selected>30 years</option>
+                        </select>
+                    </div>
+                    <button class="btn-calculate" onclick="calculateMortgage()">Calculate</button>
+                </div>
+                <div>
+                    <div class="result-box" id="mortgage-result" style="display: none;">
+                        <h3>Monthly Payment</h3>
+                        <div class="result-value" id="mortgage-payment"></div>
+                        <div class="result-detail">Total Interest Paid: <span id="mortgage-interest"></span></div>
+                        <div class="result-detail">Total Amount Paid: <span id="mortgage-total"></span></div>
+                        <div class="result-detail">Loan-to-Value: <span id="mortgage-ltv"></span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Temperature Converter -->
+        <section id="temperature" class="calculator-section">
+            <h2>🌡️ Temperature Converter</h2>
+            <p>Convert between Celsius, Fahrenheit, and Kelvin</p>
+            <div class="calc-grid">
+                <div>
+                    <div class="input-group">
+                        <label>Temperature</label>
+                        <input type="number" id="temp-value" placeholder="e.g., 100" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>From Unit</label>
+                        <select id="temp-from">
+                            <option value="C">Celsius (°C)</option>
+                            <option value="F">Fahrenheit (°F)</option>
+                            <option value="K">Kelvin (K)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>To Unit</label>
+                        <select id="temp-to">
+                            <option value="F">Fahrenheit (°F)</option>
+                            <option value="C">Celsius (°C)</option>
+                            <option value="K">Kelvin (K)</option>
+                        </select>
+                    </div>
+                    <button class="btn-calculate" onclick="convertTemperature()">Convert</button>
+                </div>
+                <div>
+                    <div class="result-box" id="temp-result" style="display: none;">
+                        <h3>Converted Temperature</h3>
+                        <div class="result-value" id="temp-result-value"></div>
+                        <div class="result-detail" id="temp-formula"></div>
+                        <div class="result-detail" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                            <strong>All Units:</strong><br>
+                            <span id="temp-all-units"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Ad Banner - Bottom -->
+    <div class="container">
+        <div class="ad-banner">
+            <div class="ad-container">
+                <p>📢 Ad Space - 728x90 Banner</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 CalcPro. All calculators are free to use.</p>
+            <p>Disclaimer: Results are for informational purposes only. Consult professionals for financial or health advice.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // BMI Calculator
+        // ============================================
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById('bmi-height').value);
+            const weight = parseFloat(document.getElementById('bmi-weight').value);
+            
+            if (!height || !weight || height <= 0 || weight <= 0) {
+                alert('Please enter valid height and weight values');
+                return;
+            }
+            
+            // Convert cm to meters
+            const heightInMeters = height / 100;
+            
+            // Calculate BMI
+            const bmi = weight / (heightInMeters * heightInMeters);
+            const bmiRounded = bmi.toFixed(1);
+            
+            // Determine category
+            let category, color;
+            if (bmi < 18.5) {
+                category = 'Underweight';
+                color = '#3498db';
+            } else if (bmi < 25) {
+                category = 'Normal Weight';
+                color = '#27ae60';
+            } else if (bmi < 30) {
+                category = 'Overweight';
+                color = '#f39c12';
+            } else {
+                category = 'Obese';
+                color = '#e74c3c';
+            }
+            
+            // Calculate healthy weight range
+            const minHealthyWeight = (18.5 * heightInMeters * heightInMeters).toFixed(1);
+            const maxHealthyWeight = (24.9 * heightInMeters * heightInMeters).toFixed(1);
+            
+            // Display results
+            document.getElementById('bmi-value').textContent = bmiRounded;
+            document.getElementById('bmi-value').style.color = color;
+            document.getElementById('bmi-category').textContent = `Category: ${category}`;
+            document.getElementById('bmi-healthy-range').innerHTML = 
+                `Healthy weight range for your height: ${minHealthyWeight} - ${maxHealthyWeight} kg`;
+            document.getElementById('bmi-result').style.display = 'block';
+        }
+        
+        // ============================================
+        // Scientific Calculator
+        // ============================================
+        let sciExpression = '';
+        let sciLastResult = '';
+        
+        function sciInput(value) {
+            if (sciExpression === '0' && value !== '.') {
+                sciExpression = value;
+            } else {
+                sciExpression += value;
+            }
+            updateSciDisplay();
+        }
+        
+        function sciFunction(func) {
+            const current = parseFloat(sciExpression) || 0;
+            let result = 0;
+            
+            switch(func) {
+                case 'sin':
+                    result = Math.sin(current * Math.PI / 180);
+                    break;
+                case 'cos':
+                    result = Math.cos(current * Math.PI / 180);
+                    break;
+                case 'tan':
+                    result = Math.tan(current * Math.PI / 180);
+                    break;
+                case 'log':
+                    result = Math.log10(Math.abs(current) || 1);
+                    break;
+                case 'ln':
+                    result = Math.log(Math.abs(current) || 1);
+                    break;
+                case 'sqrt':
+                    result = Math.sqrt(Math.abs(current));
+                    break;
+                case 'pow':
+                    result = Math.pow(current, 2);
+                    break;
+                case 'pi':
+                    result = Math.PI;
+                    break;
+            }
+            
+            sciExpression = result.toString();
+            updateSciDisplay();
+        }
+        
+        function sciClear() {
+            sciExpression = '0';
+            updateSciDisplay();
+        }
+        
+        function sciBackspace() {
+            if (sciExpression.length > 1) {
+                sciExpression = sciExpression.slice(0, -1);
+            } else {
+                sciExpression = '0';
+            }
+            updateSciDisplay();
+        }
+        
+        function sciCalculate() {
+            try {
+                // Replace display symbols with JavaScript operators
+                let expression = sciExpression
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/');
+                
+                // Evaluate the expression
+                const result = eval(expression);
+                
+                if (!isFinite(result)) {
+                    sciExpression = 'Error';
+                } else {
+                    sciExpression = parseFloat(result.toFixed(10)).toString();
+                }
+                
+                updateSciDisplay();
+            } catch (e) {
+                sciExpression = 'Error';
+                updateSciDisplay();
+                setTimeout(() => sciClear(), 1500);
+            }
+        }
+        
+        function updateSciDisplay() {
+            document.getElementById('sci-display').textContent = sciExpression;
+        }
+        
+        // ============================================
+        // Compound Interest Calculator
+        // ============================================
+        function calculateCompoundInterest() {
+            const principal = parseFloat(document.getElementById('compound-principal').value);
+            const rate = parseFloat(document.getElementById('compound-rate').value);
+            const time = parseFloat(document.getElementById('compound-time').value);
+            const frequency = parseInt(document.getElementById('compound-frequency').value);
+            const contribution = parseFloat(document.getElementById('compound-contribution').value) || 0;
+            
+            if (!principal || !rate || !time) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Calculate compound interest with monthly contributions
+            const r = rate / 100 / frequency;
+            const n = frequency;
+            const t = time;
+            
+            // Future value of initial investment
+            const fv_principal = principal * Math.pow((1 + r), n * t);
+            
+            // Future value of monthly contributions
+            const monthlyRate = rate / 100 / 12;
+            const months = t * 12;
+            const fv_contributions = contribution * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
+            
+            // Total future value
+            const totalFV = fv_principal + fv_contributions;
+            const totalInvested = principal + (contribution * months);
+            const totalInterest = totalFV - totalInvested;
+            
+            // Display results
+            document.getElementById('compound-total').textContent = '$' + totalFV.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            document.getElementById('compound-interest').textContent = '$' + totalInterest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            document.getElementById('compound-contributions').textContent = '$' + totalInvested.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            
+            // Year-by-year breakdown
+            let breakdownHTML = '';
+            let currentBalance = principal;
+            
+            for (let year = 1; year <= Math.min(t, 10); year++) {
+                const yearContributions = contribution * 12 * year;
+                const yearBalance = principal * Math.pow((1 + rate / 100), year) + 
+                                   contribution * 12 * ((Math.pow(1 + rate / 100, year) - 1) / (rate / 100));
+                breakdownHTML += `Year ${year}: $${yearBalance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}<br>`;
+            }
+            
+            if (t > 10) {
+                breakdownHTML += `<br>... and ${t - 10} more years`;
+            }
+            
+            document.getElementById('compound-breakdown').innerHTML = breakdownHTML;
+            document.getElementById('compound-result').style.display = 'block';
+        }
+        
+        // ============================================
+        // Mortgage Calculator
+        // ============================================
+        function updateLoanAmount() {
+            const price = parseFloat(document.getElementById('mortgage-price').value) || 0;
+            const downPayment = parseFloat(document.getElementById('mortgage-down').value) || 0;
+            const loanAmount = price - downPayment;
+            document.getElementById('mortgage-loan').value = loanAmount > 0 ? loanAmount.toFixed(2) : '';
+        }
+        
+        document.getElementById('mortgage-price').addEventListener('input', updateLoanAmount);
+        document.getElementById('mortgage-down').addEventListener('input', updateLoanAmount);
+        
+        function calculateMortgage() {
+            const price = parseFloat(document.getElementById('mortgage-price').value);
+            const downPayment = parseFloat(document.getElementById('mortgage-down').value) || 0;
+            const loanAmount = price - downPayment;
+            const rate = parseFloat(document.getElementById('mortgage-rate').value);
+            const years = parseInt(document.getElementById('mortgage-term').value);
+            
+            if (!loanAmount || !rate || !years) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Calculate monthly payment using mortgage formula
+            const monthlyRate = rate / 100 / 12;
+            const numPayments = years * 12;
+            
+            const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
+                                  (Math.pow(1 + monthlyRate, numPayments) - 1);
+            
+            const totalPaid = monthlyPayment * numPayments;
+            const totalInterest = totalPaid - loanAmount;
+            const ltv = ((loanAmount / price) * 100).toFixed(1);
+            
+            // Display results
+            document.getElementById('mortgage-payment').textContent = '$' + monthlyPayment.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            document.getElementById('mortgage-interest').textContent = '$' + totalInterest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            document.getElementById('mortgage-total').textContent = '$' + totalPaid.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            document.getElementById('mortgage-ltv').textContent = ltv + '%';
+            document.getElementById('mortgage-result').style.display = 'block';
+        }
+        
+        // ============================================
+        // Temperature Converter
+        // ============================================
+        function convertTemperature() {
+            const value = parseFloat(document.getElementById('temp-value').value);
+            const from = document.getElementById('temp-from').value;
+            const to = document.getElementById('temp-to').value;
+            
+            if (isNaN(value)) {
+                alert('Please enter a valid temperature');
+                return;
+            }
+            
+            let result, formula;
+            
+            // Convert to Celsius first (intermediate step)
+            let celsius;
+            if (from === 'C') {
+                celsius = value;
+            } else if (from === 'F') {
+                celsius = (value - 32) * 5 / 9;
+            } else if (from === 'K') {
+                celsius = value - 273.15;
+            }
+            
+            // Convert from Celsius to target unit
+            if (to === 'C') {
+                result = celsius;
+            } else if (to === 'F') {
+                result = (celsius * 9 / 5) + 32;
+            } else if (to === 'K') {
+                result = celsius + 273.15;
+            }
+            
+            // Create formula text
+            const unitNames = { 'C': 'Celsius', 'F': 'Fahrenheit', 'K': 'Kelvin' };
+            formula = `${value}°${from} (${unitNames[from]}) = ${result.toFixed(2)}°${to} (${unitNames[to]})`;
+            
+            // Display results
+            document.getElementById('temp-result-value').textContent = result.toFixed(2) + '°' + to;
+            document.getElementById('temp-formula').textContent = formula;
+            
+            // Show all units
+            const c = celsius.toFixed(2);
+            const f = ((celsius * 9 / 5) + 32).toFixed(2);
+            const k = (celsius + 273.15).toFixed(2);
+            document.getElementById('temp-all-units').innerHTML = 
+                `Celsius: ${c}°C<br>Fahrenheit: ${f}°F<br>Kelvin: ${k}K`;
+            
+            document.getElementById('temp-result').style.display = 'block';
+        }
+        
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-links a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
