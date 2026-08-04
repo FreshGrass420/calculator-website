@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CalcPro - Free Online Calculators</title>
-    <meta name="description" content="Free online calculators: Scientific, BMI, Compound Interest, Mortgage, Temperature Converter">
+    <meta name="description" content="Free online calculators: Scientific, BMI, Compound Interest, Mortgage, Temperature, APY">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -58,6 +58,7 @@
                 <a onclick="show('compound')" id="nav-compound">Compound Interest</a>
                 <a onclick="show('mortgage')" id="nav-mortgage">Mortgage</a>
                 <a onclick="show('temperature')" id="nav-temperature">Temperature</a>
+                <a onclick="show('apy')" id="nav-apy">APY</a>
             </div>
         </div>
     </nav>
@@ -175,131 +176,196 @@
             </div>
         </section>
 
+        <!-- APY Calculator -->
+        <section id="apy" class="section">
+            <h2>📈 APY Calculator</h2>
+            <p style="margin-bottom: 20px; color: #666;">Calculate the Annual Percentage Yield (APY) based on nominal interest rate and compounding frequency.</p>
+            <div class="calc-grid">
+                <div>
+                    <div class="input-group">
+                        <label>Nominal Interest Rate (%)</label>
+                        <input type="number" id="apy-rate" placeholder="5.0" step="0.01" oninput="calcAPY()">
+                    </div>
+                    <div class="input-group">
+                        <label>Compounding Frequency</label>
+                        <select id="apy-frequency" onchange="calcAPY()">
+                            <option value="365">Daily (365 times/year)</option>
+                            <option value="12" selected>Monthly (12 times/year)</option>
+                            <option value="4">Quarterly (4 times/year)</option>
+                            <option value="2">Semi-Annually (2 times/year)</option>
+                            <option value="1">Annually (1 time/year)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="result-box" id="apy-result">
+                    <h3>Annual Percentage Yield (APY)</h3>
+                    <div class="result-value" id="apy-value">0.00%</div>
+                    <p style="margin-top: 10px; color: #666;">Effective annual rate including compounding.</p>
+                    <p style="margin-top: 5px; font-size: 0.9em;">Formula: APY = (1 + r/n)^n - 1</p>
+                </div>
+            </div>
+        </section>
+
         <div class="ad-box">📢 Ad Space - 728x90 Banner</div>
     </div>
 
     <footer>
         <div class="container">
-            <p>© 2024 CalcPro - Free Online Calculators</p>
+            <p>© 2026 CalcPro - Free Online Calculators</p>
         </div>
     </footer>
 
     <script>
         // Tab navigation
-        function show(id) {
+        function show(sectionId) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.getElementById('nav-' + id).classList.add('active');
+            
+            document.getElementById(sectionId).classList.add('active');
+            document.getElementById('nav-' + sectionId).classList.add('active');
         }
 
-        // Scientific Calculator
+        // Scientific Calculator Logic
         let sciExpr = '';
-        function updateDisplay() { document.getElementById('sci-display').innerText = sciExpr || '0'; }
-        function sciInput(v) { sciExpr += v; updateDisplay(); }
+        function sciInput(val) {
+            sciExpr += val;
+            document.getElementById('sci-display').innerText = sciExpr;
+        }
         function sciFn(fn) {
             try {
-                let val = parseFloat(eval(sciExpr || '0'));
-                if (fn === 'sin') sciExpr = Math.sin(val * Math.PI / 180).toFixed(6);
-                else if (fn === 'cos') sciExpr = Math.cos(val * Math.PI / 180).toFixed(6);
-                else if (fn === 'tan') sciExpr = Math.tan(val * Math.PI / 180).toFixed(6);
-                else if (fn === 'log') sciExpr = Math.log10(val).toFixed(6);
-                else if (fn === 'ln') sciExpr = Math.log(val).toFixed(6);
-                else if (fn === 'sqrt') sciExpr = Math.sqrt(val).toFixed(6);
-                else if (fn === 'square') sciExpr = (val * val).toFixed(6);
-                updateDisplay();
-            } catch(e) { document.getElementById('sci-display').innerText = 'Error'; sciExpr = ''; }
+                let val = eval(sciExpr || '0');
+                let res = 0;
+                if (fn === 'sin') res = Math.sin(val);
+                else if (fn === 'cos') res = Math.cos(val);
+                else if (fn === 'tan') res = Math.tan(val);
+                else if (fn === 'log') res = Math.log10(val);
+                else if (fn === 'ln') res = Math.log(val);
+                else if (fn === 'sqrt') res = Math.sqrt(val);
+                else if (fn === 'square') res = Math.pow(val, 2);
+                sciExpr = res.toString();
+                document.getElementById('sci-display').innerText = sciExpr;
+            } catch (e) {
+                document.getElementById('sci-display').innerText = 'Error';
+                sciExpr = '';
+            }
         }
         function sciCalculate() {
-            try { sciExpr = eval(sciExpr).toString(); updateDisplay(); }
-            catch(e) { document.getElementById('sci-display').innerText = 'Error'; sciExpr = ''; }
+            try {
+                let res = eval(sciExpr);
+                sciExpr = res.toString();
+                document.getElementById('sci-display').innerText = sciExpr;
+            } catch (e) {
+                document.getElementById('sci-display').innerText = 'Error';
+                sciExpr = '';
+            }
         }
-        function sciClear() { sciExpr = ''; updateDisplay(); }
-        function sciBackspace() { sciExpr = sciExpr.slice(0, -1); updateDisplay(); }
+        function sciClear() {
+            sciExpr = '';
+            document.getElementById('sci-display').innerText = '0';
+        }
+        function sciBackspace() {
+            sciExpr = sciExpr.slice(0, -1);
+            document.getElementById('sci-display').innerText = sciExpr || '0';
+        }
 
-        // BMI
+        // BMI Calculator
         function calcBMI() {
-            let h = parseFloat(document.getElementById('bmi-height').value) / 100;
-            let w = parseFloat(document.getElementById('bmi-weight').value);
-            if (!h || !w) return;
-            let bmi = (w / (h * h)).toFixed(1);
-            let cat = '', range = '';
-            if (bmi < 18.5) { cat = 'Underweight'; }
-            else if (bmi < 25) { cat = 'Normal weight'; }
-            else if (bmi < 30) { cat = 'Overweight'; }
-            else { cat = 'Obese'; }
-            let low = (18.5 * h * h).toFixed(1);
-            let high = (24.9 * h * h).toFixed(1);
-            range = 'Healthy weight range: ' + low + 'kg - ' + high + 'kg';
-            document.getElementById('bmi-value').innerText = bmi;
-            document.getElementById('bmi-category').innerText = cat;
-            document.getElementById('bmi-range').innerText = range;
-            document.getElementById('bmi-result').style.display = 'block';
+            const h = parseFloat(document.getElementById('bmi-height').value);
+            const w = parseFloat(document.getElementById('bmi-weight').value);
+            if (h && w) {
+                const bmi = (w / ((h / 100) ** 2)).toFixed(1);
+                let cat = '';
+                if (bmi < 18.5) cat = 'Underweight';
+                else if (bmi < 25) cat = 'Normal weight';
+                else if (bmi < 30) cat = 'Overweight';
+                else cat = 'Obese';
+                
+                document.getElementById('bmi-value').innerText = bmi;
+                document.getElementById('bmi-category').innerText = cat;
+                document.getElementById('bmi-result').style.display = 'block';
+            }
         }
 
         // Compound Interest
         function calcCI() {
-            let p = parseFloat(document.getElementById('ci-principal').value) || 0;
-            let m = parseFloat(document.getElementById('ci-monthly').value) || 0;
-            let r = (parseFloat(document.getElementById('ci-rate').value) || 0) / 100;
-            let y = parseFloat(document.getElementById('ci-years').value) || 0;
-            let months = y * 12;
-            let monthlyRate = r / 12;
-            let total = p;
-            if (monthlyRate !== 0) {
-                total = (p * Math.pow(1 + monthlyRate, months)) +
-                        (m * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate));
-            } else {
-                total = p + (m * months);
+            const P = parseFloat(document.getElementById('ci-principal').value) || 0;
+            const PMT = parseFloat(document.getElementById('ci-monthly').value) || 0;
+            const r = (parseFloat(document.getElementById('ci-rate').value) || 0) / 100;
+            const t = parseFloat(document.getElementById('ci-years').value) || 0;
+            
+            if (t > 0) {
+                const n = 12; // Monthly compounding for contributions
+                const A = P * Math.pow(1 + r/n, n*t) + PMT * ((Math.pow(1 + r/n, n*t) - 1) / (r/n));
+                const totalContrib = P + (PMT * 12 * t);
+                const interest = A - totalContrib;
+                
+                document.getElementById('ci-total').innerText = '$' + A.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.getElementById('ci-contrib').innerText = '$' + totalContrib.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.getElementById('ci-interest').innerText = '$' + interest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.getElementById('ci-result').style.display = 'block';
             }
-            let contrib = p + (m * months);
-            let interest = total - contrib;
-            document.getElementById('ci-total').innerText = '$' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            document.getElementById('ci-contrib').innerText = '$' + contrib.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            document.getElementById('ci-interest').innerText = '$' + interest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            document.getElementById('ci-result').style.display = 'block';
         }
 
-        // Mortgage
+        // Mortgage Calculator
         function calcMortgage() {
-            let price = parseFloat(document.getElementById('mg-price').value) || 0;
-            let down = parseFloat(document.getElementById('mg-down').value) || 0;
-            let rate = (parseFloat(document.getElementById('mg-rate').value) || 0) / 100;
-            let years = parseFloat(document.getElementById('mg-years').value) || 0;
-            let loan = price - down;
-            let months = years * 12;
-            let monthlyRate = rate / 12;
-            let monthly = 0;
-            if (monthlyRate !== 0) {
-                monthly = loan * (monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
-            } else {
-                monthly = loan / months;
+            const price = parseFloat(document.getElementById('mg-price').value) || 0;
+            const down = parseFloat(document.getElementById('mg-down').value) || 0;
+            const rate = (parseFloat(document.getElementById('mg-rate').value) || 0) / 100 / 12;
+            const years = parseFloat(document.getElementById('mg-years').value) || 0;
+            const months = years * 12;
+            const loan = price - down;
+            
+            if (loan > 0 && months > 0) {
+                const monthly = (loan * rate * Math.pow(1 + rate, months)) / (Math.pow(1 + rate, months) - 1);
+                const totalPaid = monthly * months;
+                const totalInterest = totalPaid - loan;
+                
+                document.getElementById('mg-monthly').innerText = '$' + monthly.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.getElementById('mg-loan').innerText = '$' + loan.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.getElementById('mg-interest').innerText = '$' + totalInterest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.getElementById('mg-total').innerText = '$' + totalPaid.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.getElementById('mg-result').style.display = 'block';
             }
-            let totalPaid = monthly * months;
-            let totalInterest = totalPaid - loan;
-            document.getElementById('mg-monthly').innerText = '$' + monthly.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '/mo';
-            document.getElementById('mg-loan').innerText = '$' + loan.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            document.getElementById('mg-interest').innerText = '$' + totalInterest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            document.getElementById('mg-total').innerText = '$' + totalPaid.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            document.getElementById('mg-result').style.display = 'block';
         }
 
-        // Temperature
-        function convertTemp(from) {
-            let c = document.getElementById('temp-c');
-            let f = document.getElementById('temp-f');
-            let k = document.getElementById('temp-k');
-            let val = parseFloat(document.getElementById('temp-' + from).value);
-            if (isNaN(val)) return;
-            if (from === 'c') {
-                f.value = (val * 9/5 + 32).toFixed(2);
-                k.value = (val + 273.15).toFixed(2);
-            } else if (from === 'f') {
-                c.value = ((val - 32) * 5/9).toFixed(2);
-                k.value = ((val - 32) * 5/9 + 273.15).toFixed(2);
-            } else if (from === 'k') {
-                c.value = (val - 273.15).toFixed(2);
-                f.value = ((val - 273.15) * 9/5 + 32).toFixed(2);
+        // Temperature Converter
+        function convertTemp(source) {
+            const c = document.getElementById('temp-c');
+            const f = document.getElementById('temp-f');
+            const k = document.getElementById('temp-k');
+            
+            if (source === 'c') {
+                const val = parseFloat(c.value);
+                if (!isNaN(val)) {
+                    f.value = (val * 9/5 + 32).toFixed(2);
+                    k.value = (val + 273.15).toFixed(2);
+                }
+            } else if (source === 'f') {
+                const val = parseFloat(f.value);
+                if (!isNaN(val)) {
+                    c.value = ((val - 32) * 5/9).toFixed(2);
+                    k.value = ((val - 32) * 5/9 + 273.15).toFixed(2);
+                }
+            } else if (source === 'k') {
+                const val = parseFloat(k.value);
+                if (!isNaN(val)) {
+                    c.value = (val - 273.15).toFixed(2);
+                    f.value = ((val - 273.15) * 9/5 + 32).toFixed(2);
+                }
+            }
+        }
+
+        // APY Calculator
+        function calcAPY() {
+            const rate = parseFloat(document.getElementById('apy-rate').value);
+            const n = parseInt(document.getElementById('apy-frequency').value);
+            
+            if (!isNaN(rate) && n > 0) {
+                const r = rate / 100;
+                const apy = (Math.pow(1 + r/n, n) - 1) * 100;
+                document.getElementById('apy-value').innerText = apy.toFixed(3) + '%';
+            } else {
+                document.getElementById('apy-value').innerText = '0.00%';
             }
         }
     </script>
