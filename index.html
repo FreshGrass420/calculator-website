@@ -3,44 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scientific Calculator</title>
+    <title>CalcPro - Scientific Calculator</title>
+    <meta name="description" content="Free online scientific calculator with trigonometric functions, logarithms, and more">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <nav>
-        <a href="index.html">Scientific</a>
-        <a href="bmi.html">BMI</a>
-        <a href="compound.html">Compound</a>
-        <a href="mortgage.html">Mortgage</a>
-        <a href="temperature.html">Temperature</a>
-        <a href="apy.html">APY</a>
-    </nav>
-    <div class="calculator">
-        <h2>Scientific Calculator</h2>
-        <input type="text" id="sci-display" readonly>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
-            <button onclick="document.getElementById('sci-display').value += '7'">7</button>
-            <button onclick="document.getElementById('sci-display').value += '8'">8</button>
-            <button onclick="document.getElementById('sci-display').value += '9'">9</button>
-            <button onclick="document.getElementById('sci-display').value += '/'">/</button>
-            <button onclick="document.getElementById('sci-display').value += '4'">4</button>
-            <button onclick="document.getElementById('sci-display').value += '5'">5</button>
-            <button onclick="document.getElementById('sci-display').value += '6'">6</button>
-            <button onclick="document.getElementById('sci-display').value += '*'">*</button>
-            <button onclick="document.getElementById('sci-display').value += '1'">1</button>
-            <button onclick="document.getElementById('sci-display').value += '2'">2</button>
-            <button onclick="document.getElementById('sci-display').value += '3'">3</button>
-            <button onclick="document.getElementById('sci-display').value += '-'">-</button>
-            <button onclick="document.getElementById('sci-display').value += '0'">0</button>
-            <button onclick="document.getElementById('sci-display').value += '.'">.</button>
-            <button onclick="document.getElementById('sci-display').value = eval(document.getElementById('sci-display').value)">=</button>
-            <button onclick="document.getElementById('sci-display').value += '+'">+</button>
+    <header>
+        <div class="container">
+            <h1>🧮 CalcPro</h1>
+            <p>Your Ultimate Free Online Calculator Suite</p>
         </div>
+    </header>
+
+    <nav class="nav-bar">
+        <div class="container">
+            <div class="nav-links">
+                <a href="index.html" class="active">Scientific</a>
+                <a href="bmi.html">BMI</a>
+                <a href="compound.html">Compound Interest</a>
+                <a href="mortgage.html">Mortgage</a>
+                <a href="temperature.html">Temperature</a>
+                <a href="apy.html">APY</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="ad-box">📢 Ad Space - 728x90 Banner</div>
+
+        <section class="section">
+            <h2>🔬 Scientific Calculator</h2>
+            <div class="sci-display" id="sci-display">0</div>
+            <div class="sci-grid">
+                <button class="sci-btn fn" onclick="sciFn('sin')">sin</button>
+                <button class="sci-btn fn" onclick="sciFn('cos')">cos</button>
+                <button class="sci-btn fn" onclick="sciFn('tan')">tan</button>
+                <button class="sci-btn op" onclick="sciInput('/')">÷</button>
+                <button class="sci-btn fn" onclick="sciFn('log')">log</button>
+                <button class="sci-btn fn" onclick="sciFn('ln')">ln</button>
+                <button class="sci-btn fn" onclick="sciFn('sqrt')">√</button>
+                <button class="sci-btn op" onclick="sciInput('*')">×</button>
+                <button class="sci-btn" onclick="sciInput('7')">7</button>
+                <button class="sci-btn" onclick="sciInput('8')">8</button>
+                <button class="sci-btn" onclick="sciInput('9')">9</button>
+                <button class="sci-btn op" onclick="sciInput('-')">−</button>
+                <button class="sci-btn" onclick="sciInput('4')">4</button>
+                <button class="sci-btn" onclick="sciInput('5')">5</button>
+                <button class="sci-btn" onclick="sciInput('6')">6</button>
+                <button class="sci-btn op" onclick="sciInput('+')">+</button>
+                <button class="sci-btn" onclick="sciInput('1')">1</button>
+                <button class="sci-btn" onclick="sciInput('2')">2</button>
+                <button class="sci-btn" onclick="sciInput('3')">3</button>
+                <button class="sci-btn" onclick="sciInput('.')">.</button>
+                <button class="sci-btn" onclick="sciInput('0')">0</button>
+                <button class="sci-btn fn" onclick="sciInput('3.14159265359')">π</button>
+                <button class="sci-btn fn" onclick="sciFn('square')">x²</button>
+                <button class="sci-btn" onclick="sciCalculate()">=</button>
+                <button class="sci-btn" onclick="sciClear()" style="grid-column: span 2;">C</button>
+                <button class="sci-btn" onclick="sciBackspace()" style="grid-column: span 2;">⌫</button>
+            </div>
+        </section>
+
+        <div class="ad-box">📢 Ad Space - 728x90 Banner</div>
     </div>
-    <footer>&copy; <span id="year"></span> Calculator Website</footer>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 CalcPro - Free Online Calculators</p>
+        </div>
+    </footer>
+
     <script src="script.js"></script>
-    <!-- Cloudflare Web Analytics -->
-    <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "e698996f14194ecea9198e165afc4b70"}'></script>
-    <!-- End Cloudflare Web Analytics -->
 </body>
 </html>
