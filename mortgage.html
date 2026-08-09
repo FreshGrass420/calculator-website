@@ -3,9 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CalcBro - Mortgage Calculator</title>
-    <meta name="description" content="Calculate your monthly mortgage payments, total interest, and loan summary">
+    <title>Mortgage Calculator - Monthly Payment & Interest | CalcBro</title>
+    <meta name="description" content="Free mortgage calculator to estimate monthly payments, total interest, and loan summary. Enter home price, down payment, rate, and term.">
+    <meta name="keywords" content="mortgage calculator, monthly payment calculator, home loan calculator, mortgage payment estimator, house payment calculator, mortgage interest calculator">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="CalcBro">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Free Mortgage Calculator - Monthly Payments | CalcBro">
+    <meta property="og:description" content="Calculate your monthly mortgage payment, total interest, and loan summary. Free, accurate, mobile-friendly mortgage calculator.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calcbro.netlify.app/mortgage.html">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Free Mortgage Calculator | CalcBro">
+    <meta name="twitter:description" content="Calculate monthly mortgage payments, total interest, and loan summary.">
+    <link rel="canonical" href="https://calcbro.netlify.app/mortgage.html">
     <link rel="stylesheet" href="styles.css">
+    <!-- Structured Data: SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "CalcBro Mortgage Calculator",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web Browser",
+        "url": "https://calcbro.netlify.app/mortgage.html",
+        "description": "Free online mortgage calculator to estimate monthly payments, total interest paid, and full loan summary. Enter home price, down payment, interest rate, and loan term for instant results.",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Monthly mortgage payment calculation",
+            "Total interest calculation",
+            "Down payment input",
+            "Adjustable loan term",
+            "Loan summary breakdown"
+        ]
+    }
+    </script>
+    <!-- Structured Data: FAQPage -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "How is mortgage monthly payment calculated?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "The monthly mortgage payment is calculated using the formula M = P * [r(1+r)^n] / [(1+r)^n - 1], where P is the loan amount, r is the monthly interest rate, and n is the total number of monthly payments."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is the standard mortgage loan term?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "The most common mortgage loan terms are 15 years and 30 years. A 30-year fixed-rate mortgage is the most popular option in the United States due to lower monthly payments."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How does down payment affect my mortgage?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "A larger down payment reduces your loan amount, which lowers monthly payments and total interest paid. A down payment of at least 20% typically helps you avoid private mortgage insurance (PMI)."
+                }
+            }
+        ]
+    }
+    </script>
+    <!-- Structured Data: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://calcbro.netlify.app/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Mortgage Calculator",
+                "item": "https://calcbro.netlify.app/mortgage.html"
+            }
+        ]
+    }
+    </script>
 </head>
 <body>
     <header>
