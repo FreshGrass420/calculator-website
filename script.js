@@ -50,20 +50,42 @@ function calcBMI() {
 // Compound Interest
 function calcCI() {
     const p = parseFloat(document.getElementById('ci-principal').value) || 0;
-    const m = parseFloat(document.getElementById('ci-monthly').value) || 0;
+    const contribAmt = parseFloat(document.getElementById('ci-contribution').value) || 0;
+    const freqType = document.getElementById('ci-freq-type').value;
+    const freqN = parseFloat(document.getElementById('ci-freq-n').value) || 1;
     const r = parseFloat(document.getElementById('ci-rate').value) / 100;
     const t = parseFloat(document.getElementById('ci-years').value);
     if (!t) return;
-    
+
+    // Convert contribution frequency to a per-day interval
+    let daysPerInterval;
+    if (freqType === 'days') daysPerInterval = freqN;
+    else if (freqType === 'weeks') daysPerInterval = freqN * 7;
+    else daysPerInterval = freqN * 30.4375; // average days per month
+
+    const totalDays = t * 365;
+    const dailyRate = r / 365;
+
+    // Calculate using daily compounding with periodic contributions
     let total = p;
-    for (let i = 0; i < t * 12; i++) {
-        total = total * (1 + r/12) + m;
+    let numContributions = 0;
+    let totalContributed = p;
+
+    for (let day = 1; day <= totalDays; day++) {
+        // Apply daily interest
+        total = total * (1 + dailyRate);
+        // Add contribution if this day falls on a contribution interval
+        if (day % Math.round(daysPerInterval) === 0) {
+            total += contribAmt;
+            totalContributed += contribAmt;
+            numContributions++;
+        }
     }
-    const contrib = p + (m * 12 * t);
-    const interest = total - contrib;
-    
+
+    const interest = total - totalContributed;
+
     document.getElementById('ci-total').innerText = '$' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    document.getElementById('ci-contrib').innerText = '$' + contrib.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    document.getElementById('ci-contrib').innerText = '$' + totalContributed.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     document.getElementById('ci-interest').innerText = '$' + interest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     document.getElementById('ci-result').style.display = 'block';
 }
