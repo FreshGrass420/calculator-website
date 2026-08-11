@@ -37,3 +37,10 @@ footer { background: #1a1a2e; color: white; text-align: center; padding: 20px 0;
 /* Copy/Share buttons */
 .btn-copy { background: #3498db; }
 .btn-share { background: #2ecc71; }
+
+/* Inline style replacements */
+.sci-span-2 { grid-column: span 2; }
+.flex-row { display: flex; gap: 10px; margin-top: 10px; }
+.flex-btn { width: auto; flex: 1; }
+.bg-blue { background: #3498db; }
+.bg-green { background: #2ecc71; }
