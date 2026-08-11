@@ -10,6 +10,7 @@
     <meta name="author" content="CalcBro">
     <meta name="language" content="English">
     <meta name="revisit-after" content="7 days">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline';">
     <!-- Open Graph -->
     <meta property="og:title" content="Free Online Scientific Calculator | CalcBro">
     <meta property="og:description" content="Free online scientific calculator with trig functions, logarithms, square roots, and more. Mobile-friendly, no signup required.">
@@ -95,34 +96,50 @@
             <h2>🔬 Scientific Calculator</h2>
             <div class="sci-display" id="sci-display">0</div>
             <div class="sci-grid">
+                <button class="sci-btn mem" onclick="sciMemClear()">MC</button>
+                <button class="sci-btn mem" onclick="sciMemRecall()">MR</button>
+                <button class="sci-btn mem" onclick="sciMemAdd()">M+</button>
+                <button class="sci-btn mem" onclick="sciMemSubtract()">M−</button>
+                <button class="sci-btn fn" id="deg-rad-toggle" onclick="sciToggleDeg()">RAD</button>
                 <button class="sci-btn fn" onclick="sciFn('sin')">sin</button>
                 <button class="sci-btn fn" onclick="sciFn('cos')">cos</button>
                 <button class="sci-btn fn" onclick="sciFn('tan')">tan</button>
-                <button class="sci-btn op" onclick="sciInput('/')">÷</button>
                 <button class="sci-btn fn" onclick="sciFn('log')">log</button>
                 <button class="sci-btn fn" onclick="sciFn('ln')">ln</button>
                 <button class="sci-btn fn" onclick="sciFn('sqrt')">√</button>
-                <button class="sci-btn op" onclick="sciInput('*')">×</button>
+                <button class="sci-btn op" onclick="sciInput('^')">x^y</button>
+                <button class="sci-btn op" onclick="sciInput('(')">(</button>
+                <button class="sci-btn op" onclick="sciInput(')')">)</button>
+                <button class="sci-btn op" onclick="sciInput('/')">÷</button>
                 <button class="sci-btn" onclick="sciInput('7')">7</button>
                 <button class="sci-btn" onclick="sciInput('8')">8</button>
                 <button class="sci-btn" onclick="sciInput('9')">9</button>
-                <button class="sci-btn op" onclick="sciInput('-')">−</button>
+                <button class="sci-btn op" onclick="sciInput('*')">×</button>
                 <button class="sci-btn" onclick="sciInput('4')">4</button>
                 <button class="sci-btn" onclick="sciInput('5')">5</button>
                 <button class="sci-btn" onclick="sciInput('6')">6</button>
-                <button class="sci-btn op" onclick="sciInput('+')">+</button>
+                <button class="sci-btn op" onclick="sciInput('-')">−</button>
                 <button class="sci-btn" onclick="sciInput('1')">1</button>
                 <button class="sci-btn" onclick="sciInput('2')">2</button>
                 <button class="sci-btn" onclick="sciInput('3')">3</button>
-                <button class="sci-btn" onclick="sciInput('.')">.</button>
+                <button class="sci-btn op" onclick="sciInput('+')">+</button>
                 <button class="sci-btn" onclick="sciInput('0')">0</button>
-                <button class="sci-btn fn" onclick="sciInput('3.14159265359')">π</button>
+                <button class="sci-btn" onclick="sciInput('.')">.</button>
+                <button class="sci-btn fn" onclick="sciInput('pi')">π</button>
                 <button class="sci-btn fn" onclick="sciFn('square')">x²</button>
+                <button class="sci-btn fn" onclick="sciFactorial()">x!</button>
+                <button class="sci-btn fn" onclick="sciReciprocal()">1/x</button>
+                <button class="sci-btn fn" onclick="sciPercent()">%</button>
                 <button class="sci-btn" onclick="sciCalculate()">=</button>
                 <button class="sci-btn" onclick="sciClear()" style="grid-column: span 2;">C</button>
                 <button class="sci-btn" onclick="sciBackspace()" style="grid-column: span 2;">⌫</button>
             </div>
         </section>
+
+        <div style="display:flex;gap:10px;margin-top:10px;">
+            <button class="btn-calc" id="copy-btn-sci" onclick="copyResult('sci')" style="width:auto;flex:1;background:#3498db;">📋 Copy Result</button>
+            <button class="btn-calc" onclick="shareResult('sci')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
+        </div>
 
         <div class="ad-box">📢 Ad Space - 728x90 Banner</div>
     </div>

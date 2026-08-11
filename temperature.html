@@ -10,6 +10,7 @@
     <meta name="author" content="CalcBro">
     <meta name="language" content="English">
     <meta name="revisit-after" content="7 days">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline';">
     <!-- Open Graph -->
     <meta property="og:title" content="Free Temperature Converter - C, F, K | CalcBro">
     <meta property="og:description" content="Convert between Celsius, Fahrenheit, and Kelvin instantly. Free, accurate, mobile-friendly temperature converter.">
@@ -137,6 +138,10 @@
                     <p style="color:#666;">Type a value in any field and the others update automatically.</p>
                     <p style="margin-top:10px;color:#666;">°F = °C × 9/5 + 32<br>K = °C + 273.15</p>
                 </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:10px;">
+                <button class="btn-calc" id="copy-btn-temp" onclick="copyResult('' + key + '\')')" style="width:auto;flex:1;background:#3498db;">📋 Copy Result</button>
+                <button class="btn-calc" onclick="shareResult('' + key + '\')')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
             </div>
         </section>
 

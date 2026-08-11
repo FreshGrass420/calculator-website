@@ -10,6 +10,7 @@
     <meta name="author" content="CalcBro">
     <meta name="language" content="English">
     <meta name="revisit-after" content="7 days">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline';">
     <!-- Open Graph -->
     <meta property="og:title" content="Free BMI Calculator Online - Body Mass Index | CalcBro">
     <meta property="og:description" content="Calculate your Body Mass Index (BMI) instantly. View health categories, BMI chart, and formula explanation. Free, fast, mobile-friendly.">
@@ -138,6 +139,10 @@
                     <p id="bmi-category" style="margin-top:10px;font-size:1.1em;"></p>
                     <p id="bmi-range" style="margin-top:5px;color:#666;"></p>
                 </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:10px;">
+                <button class="btn-calc" id="copy-btn-bmi" onclick="copyResult('bmi')" style="width:auto;flex:1;background:#3498db;">📋 Copy Result</button>
+                <button class="btn-calc" onclick="shareResult('bmi')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
             </div>
         </section>
 

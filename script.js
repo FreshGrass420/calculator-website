@@ -1,122 +1,356 @@
-// Scientific Calculator Logic
+// ============================================================
+// Safe Expression Parser (shunting-yard algorithm) - replaces eval()
+// ============================================================
+const PRECEDENCE = { '+':1, '-':1, '*':2, '/':2, '^':3 };
+const RIGHT_ASSOC = { '^': true };
+const FUNCS = { 'sin':Math.sin, 'cos':Math.cos, 'tan':Math.tan, 'log':Math.log10, 'ln':Math.log, 'sqrt':Math.sqrt };
+const CONSTANTS = { 'pi': Math.PI, 'e': Math.E };
+
+function tokenize(expr) {
+    const tokens = [];
+    let i = 0;
+    while (i < expr.length) {
+        const c = expr[i];
+        if (c === ' ' || c === ',') { i++; continue; }
+        if (/[0-9.]/.test(c)) {
+            let num = '';
+            while (i < expr.length && /[0-9.]/.test(expr[i])) num += expr[i++];
+            // scientific notation
+            if (expr[i] === 'e' && /[+-]/.test(expr[i+1])) {
+                num += expr[i++] + expr[i++];
+                while (i < expr.length && /[0-9]/.test(expr[i])) num += expr[i++];
+            }
+            tokens.push({ type:'num', value: parseFloat(num) });
+            continue;
+        }
+        if (/[a-zA-Z]/.test(c)) {
+            let name = '';
+            while (i < expr.length && /[a-zA-Z0-9]/.test(expr[i])) name += expr[i++];
+            name = name.toLowerCase();
+            if (FUNCS[name]) tokens.push({ type:'func', value: name });
+            else if (CONSTANTS[name] !== undefined) tokens.push({ type:'num', value: CONSTANTS[name] });
+            else throw new Error('Unknown token: ' + name);
+            continue;
+        }
+        if ('+-*/^()'.includes(c)) { tokens.push({ type:'op', value: c }); i++; continue; }
+        throw new Error('Invalid character: ' + c);
+    }
+    return tokens;
+}
+
+function toRPN(tokens) {
+    const output = [];
+    const stack = [];
+    for (const t of tokens) {
+        if (t.type === 'num') output.push(t);
+        else if (t.type === 'func') stack.push(t);
+        else if (t.value === '(') stack.push(t);
+        else if (t.value === ')') {
+            while (stack.length && stack[stack.length-1].value !== '(') output.push(stack.pop());
+            if (!stack.length) throw new Error('Mismatched parentheses');
+            stack.pop();
+            if (stack.length && stack[stack.length-1].type === 'func') output.push(stack.pop());
+        }
+        else if (t.type === 'op') {
+            while (stack.length) {
+                const top = stack[stack.length-1];
+                if (top.type === 'func' || (top.type === 'op' && (PRECEDENCE[top.value] > PRECEDENCE[t.value] || (PRECEDENCE[top.value] === PRECEDENCE[t.value] && !RIGHT_ASSOC[t.value])))) {
+                    output.push(stack.pop());
+                } else break;
+            }
+            stack.push(t);
+        }
+    }
+    while (stack.length) {
+        const top = stack.pop();
+        if (top.value === '(' || top.value === ')') throw new Error('Mismatched parentheses');
+        output.push(top);
+    }
+    return output;
+}
+
+function evalRPN(rpn) {
+    const stack = [];
+    for (const t of rpn) {
+        if (t.type === 'num') stack.push(t.value);
+        else if (t.type === 'func') {
+            if (!stack.length) throw new Error('Missing argument');
+            stack.push(FUNCS[t.value](stack.pop()));
+        }
+        else if (t.type === 'op') {
+            if (stack.length < 2) throw new Error('Missing operand');
+            const b = stack.pop(), a = stack.pop();
+            switch(t.value) {
+                case '+': stack.push(a + b); break;
+                case '-': stack.push(a - b); break;
+                case '*': stack.push(a * b); break;
+                case '/': stack.push(a / b); break;
+                case '^': stack.push(Math.pow(a, b)); break;
+            }
+        }
+    }
+    if (stack.length !== 1) throw new Error('Invalid expression');
+    return stack[0];
+}
+
+function safeEval(expr) {
+    return evalRPN(toRPN(tokenize(expr)));
+}
+
+function formatResult(val) {
+    if (!isFinite(val)) return 'Error';
+    if (Math.abs(val) >= 1e15 || (Math.abs(val) < 1e-6 && val !== 0)) return val.toExponential(6);
+    return parseFloat(val.toPrecision(12)).toString();
+}
+
+// ============================================================
+// Scientific Calculator
+// ============================================================
 let sciExpression = '';
+let sciMemory = 0;
+let degMode = false;
+
+function sciUpdateDisplay() {
+    document.getElementById('sci-display').innerText = sciExpression || '0';
+}
+
 function sciInput(val) {
     sciExpression += val;
-    document.getElementById('sci-display').innerText = sciExpression || '0';
+    sciUpdateDisplay();
 }
+
 function sciFn(fn) {
-    if (fn === 'sqrt') sciExpression += 'Math.sqrt(';
-    else if (fn === 'square') sciExpression += '**2';
-    else sciExpression += `Math.${fn}(`;
-    document.getElementById('sci-display').innerText = sciExpression;
+    if (fn === 'sqrt') sciExpression += 'sqrt(';
+    else if (fn === 'square') sciExpression += '^2';
+    else sciExpression += fn + '(';
+    sciUpdateDisplay();
 }
+
 function sciClear() {
     sciExpression = '';
-    document.getElementById('sci-display').innerText = '0';
+    sciUpdateDisplay();
 }
+
 function sciBackspace() {
     sciExpression = sciExpression.slice(0, -1);
-    document.getElementById('sci-display').innerText = sciExpression || '0';
+    sciUpdateDisplay();
 }
+
+function sciToggleDeg() {
+    degMode = !degMode;
+    document.getElementById('deg-rad-toggle').innerText = degMode ? 'DEG' : 'RAD';
+}
+
+function sciFactorial() {
+    sciExpression += '!';
+    sciUpdateDisplay();
+}
+
+function sciPercent() {
+    sciExpression += '/100';
+    sciUpdateDisplay();
+}
+
+function sciReciprocal() {
+    sciExpression = '1/(' + sciExpression + ')';
+    sciUpdateDisplay();
+}
+
+function sciMemClear() { sciMemory = 0; }
+function sciMemRecall() { sciExpression += String(sciMemory); sciUpdateDisplay(); }
+function sciMemAdd() {
+    try { sciMemory += safeEval(sciExpression); } catch {}
+}
+function sciMemSubtract() {
+    try { sciMemory -= safeEval(sciExpression); } catch {}
+}
+
 function sciCalculate() {
     try {
-        const result = eval(sciExpression);
-        document.getElementById('sci-display').innerText = result;
-        sciExpression = String(result);
+        let expr = sciExpression;
+        // Handle factorial
+        expr = expr.replace(/(\d+(?:\.\d+)?|\))!/g, (match, base) => {
+            const n = parseFloat(base);
+            if (n < 0 || n !== Math.floor(n)) throw new Error('Invalid factorial');
+            let f = 1;
+            for (let i = 2; i <= n; i++) f *= i;
+            return '(' + f + ')';
+        });
+        // Convert trig functions if in degree mode
+        if (degMode) {
+            expr = expr.replace(/sin\(/g, 'sin(').replace(/cos\(/g, 'cos(').replace(/tan\(/g, 'tan(');
+            // Wrap arguments with radians conversion
+            expr = expr.replace(/(sin|cos|tan)\(([^()]+)\)/g, (m, fn, arg) => fn + '(' + (arg) + '*pi/180)');
+        }
+        const result = safeEval(expr);
+        sciExpression = formatResult(result);
+        sciUpdateDisplay();
     } catch {
         document.getElementById('sci-display').innerText = 'Error';
         sciExpression = '';
     }
 }
 
-// BMI Calculator
+// Keyboard support
+document.addEventListener('keydown', function(e) {
+    const key = e.key;
+    const display = document.getElementById('sci-display');
+    if (!display) return;
+    // Only intercept if the scientific calculator is visible (on index.html)
+    if (!document.querySelector('.sci-grid')) return;
+    // Don't intercept if user is typing in an input field
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+    if (/[0-9.]/.test(key)) { sciInput(key); e.preventDefault(); }
+    else if (['+', '-', '*', '/', '(', ')'].includes(key)) { sciInput(key); e.preventDefault(); }
+    else if (key === '^') { sciInput('^'); e.preventDefault(); }
+    else if (key === 'Enter') { sciCalculate(); e.preventDefault(); }
+    else if (key === 'Backspace') { sciBackspace(); e.preventDefault(); }
+    else if (key === 'Escape') { sciClear(); e.preventDefault(); }
+    else if (key === 'p' || key === 'P') { sciInput('pi'); e.preventDefault(); }
+});
+
+// ============================================================
+// BMI Calculator with input validation
+// ============================================================
 function calcBMI() {
-    const h = parseFloat(document.getElementById('bmi-height').value) / 100;
+    const h = parseFloat(document.getElementById('bmi-height').value);
     const w = parseFloat(document.getElementById('bmi-weight').value);
-    if (!h || !w) return;
-    const bmi = (w / (h * h)).toFixed(1);
+
+    if (!h || h <= 0 || isNaN(h)) {
+        alert('Please enter a valid height greater than 0.');
+        return;
+    }
+    if (!w || w <= 0 || isNaN(w)) {
+        alert('Please enter a valid weight greater than 0.');
+        return;
+    }
+
+    const heightM = h / 100;
+    const bmi = (w / (heightM * heightM)).toFixed(1);
     let cat = '', color = '';
     if (bmi < 18.5) { cat = 'Underweight'; color = '#3498db'; }
     else if (bmi < 25) { cat = 'Normal weight'; color = '#2ecc71'; }
     else if (bmi < 30) { cat = 'Overweight'; color = '#f39c12'; }
-    else { cat = 'Obese'; color = '#e74c3c'; }
-    
+    else if (bmi < 35) { cat = 'Obese (Class I)'; color = '#e74c3c'; }
+    else if (bmi < 40) { cat = 'Obese (Class II)'; color = '#c0392b'; }
+    else { cat = 'Obese (Class III)'; color = '#8e44ad'; }
+
     document.getElementById('bmi-value').innerText = bmi;
     document.getElementById('bmi-category').innerText = cat;
     document.getElementById('bmi-category').style.color = color;
     document.getElementById('bmi-result').style.display = 'block';
+    copyShareData.bmi = 'BMI: ' + bmi + ' (' + cat + ')';
 }
 
-// Compound Interest
+// ============================================================
+// Compound Interest - formula-based (no loop)
+// ============================================================
 function calcCI() {
-    const p = parseFloat(document.getElementById('ci-principal').value) || 0;
-    const contribAmt = parseFloat(document.getElementById('ci-contribution').value) || 0;
+    const p = parseFloat(document.getElementById('ci-principal').value);
+    const contribAmt = parseFloat(document.getElementById('ci-contribution').value);
     const freqType = document.getElementById('ci-freq-type').value;
-    const freqN = parseFloat(document.getElementById('ci-freq-n').value) || 1;
-    const r = parseFloat(document.getElementById('ci-rate').value) / 100;
+    const freqN = parseFloat(document.getElementById('ci-freq-n').value);
+    const r = parseFloat(document.getElementById('ci-rate').value);
     const t = parseFloat(document.getElementById('ci-years').value);
-    if (!t) return;
 
-    // Convert contribution frequency to a per-day interval
-    let daysPerInterval;
-    if (freqType === 'days') daysPerInterval = freqN;
-    else if (freqType === 'weeks') daysPerInterval = freqN * 7;
-    else daysPerInterval = freqN * 30.4375; // average days per month
+    if (isNaN(p) || p < 0) { alert('Please enter a valid initial investment (0 or greater).'); return; }
+    if (isNaN(r) || r < 0) { alert('Please enter a valid interest rate (0 or greater).'); return; }
+    if (isNaN(t) || t <= 0) { alert('Please enter a valid number of years (greater than 0).'); return; }
+    if (isNaN(freqN) || freqN <= 0) { alert('Please enter a valid contribution interval (greater than 0).'); return; }
 
-    const totalDays = t * 365;
-    const dailyRate = r / 365;
+    const contrib = (isNaN(contribAmt) || contribAmt < 0) ? 0 : contribAmt;
 
-    // Calculate using daily compounding with periodic contributions
-    let total = p;
-    let numContributions = 0;
-    let totalContributed = p;
+    // Convert contribution frequency to periods per year
+    let contribsPerYear;
+    if (freqType === 'days') contribsPerYear = 365 / freqN;
+    else if (freqType === 'weeks') contribsPerYear = 52 / freqN;
+    else contribsPerYear = 12 / freqN;
 
-    for (let day = 1; day <= totalDays; day++) {
-        // Apply daily interest
-        total = total * (1 + dailyRate);
-        // Add contribution if this day falls on a contribution interval
-        if (day % Math.round(daysPerInterval) === 0) {
-            total += contribAmt;
-            totalContributed += contribAmt;
-            numContributions++;
-        }
+    const annualRate = r / 100;
+    const n = 365; // daily compounding
+    const dailyRate = annualRate / n;
+
+    // Future value of principal: P(1+r/n)^(nt)
+    const fvPrincipal = p * Math.pow(1 + dailyRate, n * t);
+
+    // Future value of contributions (annuity with daily compounding):
+    // FV = PMT * [((1+r/n)^(nt) - 1) / (r/n)] adjusted for contribution frequency
+    let fvContrib = 0;
+    if (contrib > 0 && annualRate > 0) {
+        // Contributions made contribsPerYear times per year
+        // Use the effective rate per contribution period
+        const periodsPerYear = contribsPerYear;
+        const totalContributions = Math.floor(periodsPerYear * t);
+        const ratePerPeriod = Math.pow(1 + dailyRate, n / periodsPerYear) - 1;
+        fvContrib = contrib * ((Math.pow(1 + ratePerPeriod, totalContributions) - 1) / ratePerPeriod);
+    } else if (contrib > 0) {
+        fvContrib = contrib * contribsPerYear * t;
     }
 
+    const total = fvPrincipal + fvContrib;
+    const totalContributed = p + contrib * contribsPerYear * t;
     const interest = total - totalContributed;
 
-    document.getElementById('ci-total').innerText = '$' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    document.getElementById('ci-contrib').innerText = '$' + totalContributed.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    document.getElementById('ci-interest').innerText = '$' + interest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    const fmt = v => '$' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    document.getElementById('ci-total').innerText = fmt(total);
+    document.getElementById('ci-contrib').innerText = fmt(totalContributed);
+    document.getElementById('ci-interest').innerText = fmt(interest);
     document.getElementById('ci-result').style.display = 'block';
+    copyShareData.ci = 'Compound Interest: ' + fmt(total) + ' (Interest: ' + fmt(interest) + ')';
 }
 
-// Mortgage Calculator
+// ============================================================
+// Mortgage Calculator with tax, insurance, PMI, HOA
+// ============================================================
 function calcMortgage() {
     const price = parseFloat(document.getElementById('mg-price').value);
     const down = parseFloat(document.getElementById('mg-down').value) || 0;
-    const rate = parseFloat(document.getElementById('mg-rate').value) / 100 / 12;
+    const rate = parseFloat(document.getElementById('mg-rate').value);
     const years = parseFloat(document.getElementById('mg-years').value);
-    if (!price || !years) return;
-    
+    const propTax = parseFloat(document.getElementById('mg-prop-tax').value) || 0;
+    const insurance = parseFloat(document.getElementById('mg-insurance').value) || 0;
+    const pmi = parseFloat(document.getElementById('mg-pmi').value) || 0;
+    const hoa = parseFloat(document.getElementById('mg-hoa').value) || 0;
+
+    if (isNaN(price) || price <= 0) { alert('Please enter a valid home price greater than 0.'); return; }
+    if (isNaN(years) || years <= 0) { alert('Please enter a valid loan term greater than 0.'); return; }
+    if (isNaN(rate) || rate < 0) { alert('Please enter a valid interest rate (0 or greater).'); return; }
+
     const loan = price - down;
     const n = years * 12;
-    const monthly = (loan * rate * Math.pow(1 + rate, n)) / (Math.pow(1 + rate, n) - 1);
-    const totalPaid = monthly * n;
-    const totalInterest = totalPaid - loan;
-    
-    document.getElementById('mg-monthly').innerText = '$' + monthly.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    document.getElementById('mg-loan').innerText = '$' + loan.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    document.getElementById('mg-interest').innerText = '$' + totalInterest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    document.getElementById('mg-total').innerText = '$' + totalPaid.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    let monthlyPnI;
+    if (rate === 0) {
+        monthlyPnI = loan / n;
+    } else {
+        const monthlyRate = rate / 100 / 12;
+        monthlyPnI = (loan * monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1);
+    }
+
+    const monthlyTax = propTax / 12;
+    const monthlyInsurance = insurance / 12;
+    const totalMonthly = monthlyPnI + monthlyTax + monthlyInsurance + pmi + hoa;
+    const totalPaid = totalMonthly * n;
+    const totalInterest = (monthlyPnI * n) - loan;
+
+    const fmt = v => '$' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    document.getElementById('mg-monthly').innerText = fmt(totalMonthly) + ' /mo';
+    document.getElementById('mg-loan').innerText = fmt(loan);
+    document.getElementById('mg-interest').innerText = fmt(totalInterest);
+    document.getElementById('mg-total').innerText = fmt(totalPaid);
     document.getElementById('mg-result').style.display = 'block';
+    copyShareData.mortgage = 'Monthly Payment: ' + fmt(totalMonthly) + ' | Loan: ' + fmt(loan) + ' | Interest: ' + fmt(totalInterest);
 }
 
+// ============================================================
 // Temperature Converter
+// ============================================================
 function convertTemp(source) {
     const c = document.getElementById('temp-c');
     const f = document.getElementById('temp-f');
     const k = document.getElementById('temp-k');
-    
+
     if (source === 'c') {
         const val = parseFloat(c.value);
         if (!isNaN(val)) {
@@ -136,36 +370,74 @@ function convertTemp(source) {
             f.value = ((val - 273.15) * 9/5 + 32).toFixed(2);
         }
     }
+    copyShareData.temp = 'C=' + c.value + ' F=' + f.value + ' K=' + k.value;
 }
 
-// APY Calculator
+// ============================================================
+// APY Calculator with validation
+// ============================================================
 function calcAPY() {
-    const principal = parseFloat(document.getElementById('apy-principal').value) || 0;
-    const rate = parseFloat(document.getElementById('apy-rate').value) / 100;
+    const principal = parseFloat(document.getElementById('apy-principal').value);
+    const rate = parseFloat(document.getElementById('apy-rate').value);
     const term = parseFloat(document.getElementById('apy-term').value);
     const unit = document.getElementById('apy-term-unit').value;
     const freq = parseInt(document.getElementById('apy-freq').value);
-    
-    if (!term || isNaN(rate)) return;
-    
+
+    if (isNaN(principal) || principal <= 0) { alert('Please enter a valid initial deposit greater than 0.'); return; }
+    if (isNaN(rate) || rate < 0) { alert('Please enter a valid interest rate (0 or greater).'); return; }
+    if (isNaN(term) || term <= 0) { alert('Please enter a valid term greater than 0.'); return; }
+
     let years = term;
     if (unit === 'days') years = term / 365;
     else if (unit === 'weeks') years = term / 52;
     else if (unit === 'months') years = term / 12;
-    
+
     const n = freq;
-    const finalAmount = principal * Math.pow(1 + rate/n, n * years);
+    const r = rate / 100;
+    const finalAmount = principal * Math.pow(1 + r/n, n * years);
     const interest = finalAmount - principal;
-    const effectiveYield = (Math.pow(1 + rate/n, n) - 1) * 100;
+    const effectiveYield = (Math.pow(1 + r/n, n) - 1) * 100;
     const multiplier = finalAmount / principal;
     const dailyInterest = interest / (years * 365);
-    const doubleTime = rate > 0 ? (72 / (effectiveYield)).toFixed(1) : 'N/A';
-    
-    document.getElementById('apy-final').innerText = '$' + finalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    document.getElementById('apy-interest').innerText = '$' + interest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    const doubleTime = effectiveYield > 0 ? (72 / effectiveYield).toFixed(1) : 'N/A';
+
+    const fmt = v => '$' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    document.getElementById('apy-final').innerText = fmt(finalAmount);
+    document.getElementById('apy-interest').innerText = fmt(interest);
     document.getElementById('apy-effective').innerText = effectiveYield.toFixed(2) + '%';
     document.getElementById('apy-multiplier').innerText = multiplier.toFixed(2) + 'x';
-    document.getElementById('apy-daily').innerText = '$' + dailyInterest.toFixed(2);
+    document.getElementById('apy-daily').innerText = fmt(dailyInterest);
     document.getElementById('apy-double').innerText = doubleTime + ' years';
     document.getElementById('apy-result').style.display = 'block';
+    copyShareData.apy = 'APY: ' + fmt(finalAmount) + ' (Yield: ' + effectiveYield.toFixed(2) + '%)';
+}
+
+// ============================================================
+// Copy & Share functionality
+// ============================================================
+const copyShareData = {};
+
+function copyResult(page) {
+    const data = copyShareData[page] || 'No result available';
+    navigator.clipboard.writeText(data).then(() => {
+        const btn = document.getElementById('copy-btn-' + page);
+        if (btn) {
+            const original = btn.innerText;
+            btn.innerText = '✓ Copied!';
+            btn.style.background = '#2ecc71';
+            setTimeout(() => { btn.innerText = original; btn.style.background = ''; }, 2000);
+        }
+    }).catch(() => alert('Copy failed. Please copy manually.'));
+}
+
+function shareResult(page) {
+    const data = copyShareData[page] || 'No result available';
+    const shareData = { title: 'CalcBro Result', text: data, url: window.location.href };
+    if (navigator.share) {
+        navigator.share(shareData).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(data + ' - ' + window.location.href).then(() => {
+            alert('Link and result copied to clipboard!');
+        }).catch(() => alert('Sharing not supported. Please copy manually.'));
+    }
 }

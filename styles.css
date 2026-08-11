@@ -29,3 +29,11 @@ h2 { color: #667eea; margin-bottom: 15px; }
 .sci-btn.fn { background: #ffe8e8; }
 .ad-box { background: #f8f9fa; border: 2px dashed #ccc; padding: 20px; text-align: center; margin: 20px 0; color: #999; border-radius: 8px; }
 footer { background: #1a1a2e; color: white; text-align: center; padding: 20px 0; margin-top: 40px; }
+
+/* Memory buttons */
+.sci-btn.mem { background: #e8f5e9; font-size: 14px; }
+/* Degree/Radian toggle */
+#deg-rad-toggle { background: #fff3e0; font-weight: 700; }
+/* Copy/Share buttons */
+.btn-copy { background: #3498db; }
+.btn-share { background: #2ecc71; }
