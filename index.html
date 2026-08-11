@@ -10,8 +10,7 @@
     <meta name="author" content="CalcBro">
     <meta name="language" content="English">
     <meta name="revisit-after" content="7 days">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self';">
-    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline';">
     <!-- Open Graph -->
     <meta property="og:title" content="Free Online Scientific Calculator | CalcBro">
     <meta property="og:description" content="Free online scientific calculator with trig functions, logarithms, square roots, and more. Mobile-friendly, no signup required.">
@@ -132,14 +131,14 @@
                 <button class="sci-btn fn" onclick="sciReciprocal()">1/x</button>
                 <button class="sci-btn fn" onclick="sciPercent()">%</button>
                 <button class="sci-btn" onclick="sciCalculate()">=</button>
-                <button class="sci-btn sci-span-2" onclick="sciClear()">C</button>
-                <button class="sci-btn sci-span-2" onclick="sciBackspace()">⌫</button>
+                <button class="sci-btn" onclick="sciClear()" style="grid-column: span 2;">C</button>
+                <button class="sci-btn" onclick="sciBackspace()" style="grid-column: span 2;">⌫</button>
             </div>
         </section>
 
-        <div class="flex-row">
-            <button class="btn-calc flex-btn bg-blue" id="copy-btn-sci" onclick="copyResult('sci')">📋 Copy Result</button>
-            <button class="btn-calc flex-btn bg-green" onclick="shareResult('sci')">📤 Share</button>
+        <div style="display:flex;gap:10px;margin-top:10px;">
+            <button class="btn-calc" id="copy-btn-sci" onclick="copyResult('sci')" style="width:auto;flex:1;background:#3498db;">📋 Copy Result</button>
+            <button class="btn-calc" onclick="shareResult('sci')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
         </div>
 
         <div class="ad-box">📢 Ad Space - 728x90 Banner</div>
