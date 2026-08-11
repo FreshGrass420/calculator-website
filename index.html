@@ -11,7 +11,8 @@
     <meta name="language" content="English">
     <meta name="revisit-after" content="7 days">
     <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline';">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self'; frame-ancestors 'none';">
     <!-- Open Graph -->
     <meta property="og:title" content="Free Online Scientific Calculator | CalcBro">
     <meta property="og:description" content="Free online scientific calculator with trig functions, logarithms, square roots, and more. Mobile-friendly, no signup required.">
@@ -149,16 +150,16 @@
                 <!-- Numbers 0 and Special Row -->
                 <button class="sci-btn" onclick="sciInput('0')">0</button>
                 <button class="sci-btn" onclick="sciInput('.')">.</button>
-                <button class="sci-btn" onclick="sciCalculateDebounced()" style="grid-column: span 3;">=</button>
+                <button class="sci-btn equals-btn" onclick="sciCalculateDebounced()">=</button>
                 
                 <!-- Clear and Backspace Row -->
-                <button class="sci-btn" onclick="sciClear()" style="grid-column: span 2;">C</button>
-                <button class="sci-btn" onclick="sciBackspace()" style="grid-column: span 3;">⌫</button>
+                <button class="sci-btn clear-btn" onclick="sciClear()">C</button>
+                <button class="sci-btn backspace-btn" onclick="sciBackspace()">⌫</button>
             </div>
         </section>
 
-        <div style="display:flex;gap:10px;margin-top:10px;">
-            <button class="btn-calc" onclick="shareResult('sci')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
+        <div class="share-container">
+            <button class="btn-calc share-btn" onclick="shareResult('sci')">📤 Share</button>
         </div>
 
         <div class="ad-box">📢 Ad Space - 728x90 Banner</div>
