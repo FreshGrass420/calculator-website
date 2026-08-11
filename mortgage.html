@@ -10,6 +10,7 @@
     <meta name="author" content="CalcBro">
     <meta name="language" content="English">
     <meta name="revisit-after" content="7 days">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline';">
     <!-- Open Graph -->
     <meta property="og:title" content="Free Mortgage Calculator - Monthly Payments | CalcBro">
     <meta property="og:description" content="Calculate your monthly mortgage payment, total interest, and loan summary. Free, accurate, mobile-friendly mortgage calculator.">
@@ -132,6 +133,10 @@
                     <div class="input-group"><label>Down Payment ($)</label><input type="number" id="mg-down" placeholder="60000"></div>
                     <div class="input-group"><label>Interest Rate (%)</label><input type="number" id="mg-rate" placeholder="6.5"></div>
                     <div class="input-group"><label>Loan Term (years)</label><input type="number" id="mg-years" value="30"></div>
+                    <div class="input-group"><label>Property Tax (annual $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-prop-tax" placeholder="3600"></div>
+                    <div class="input-group"><label>Insurance (annual $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-insurance" placeholder="1200"></div>
+                    <div class="input-group"><label>PMI (monthly $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-pmi" placeholder="0"></div>
+                    <div class="input-group"><label>HOA (monthly $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-hoa" placeholder="0"></div>
                     <button class="btn-calc" onclick="calcMortgage()">Calculate</button>
                 </div>
                 <div class="result-box" id="mg-result" style="display:none;">
@@ -141,6 +146,10 @@
                     <p>Total Interest: <strong id="mg-interest"></strong></p>
                     <p>Total Paid: <strong id="mg-total"></strong></p>
                 </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:10px;">
+                <button class="btn-calc" id="copy-btn-mortgage" onclick="copyResult('mortgage')" style="width:auto;flex:1;background:#3498db;">📋 Copy Result</button>
+                <button class="btn-calc" onclick="shareResult('mortgage')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
             </div>
         </section>
 

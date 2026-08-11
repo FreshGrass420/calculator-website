@@ -10,6 +10,7 @@
     <meta name="author" content="CalcBro">
     <meta name="language" content="English">
     <meta name="revisit-after" content="7 days">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline';">
     <!-- Open Graph -->
     <meta property="og:title" content="Free APY Calculator - Annual Percentage Yield | CalcBro">
     <meta property="og:description" content="Calculate Annual Percentage Yield (APY) with compounding frequency. See effective yield, growth multiplier, and time to double.">
@@ -144,6 +145,10 @@
                     <p>Est. Daily Interest: <strong id="apy-daily"></strong></p>
                     <p>Time to Double: <strong id="apy-double"></strong></p>
                 </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:10px;">
+                <button class="btn-calc" id="copy-btn-apy" onclick="copyResult('' + key + '\')')" style="width:auto;flex:1;background:#3498db;">📋 Copy Result</button>
+                <button class="btn-calc" onclick="shareResult('' + key + '\')')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
             </div>
         </section>
 
