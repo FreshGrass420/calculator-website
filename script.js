@@ -1,10 +1,18 @@
 // ============================================================
 // Safe Expression Parser (shunting-yard algorithm) - replaces eval()
 // ============================================================
-const PRECEDENCE = { '+':1, '-':1, '*':2, '/':2, '^':3 };
+const PRECEDENCE = { '+':1, '-':1, '*':2, '/':2, '^':3, '!':4 };
 const RIGHT_ASSOC = { '^': true };
 const FUNCS = { 'sin':Math.sin, 'cos':Math.cos, 'tan':Math.tan, 'log':Math.log10, 'ln':Math.log, 'sqrt':Math.sqrt };
 const CONSTANTS = { 'pi': Math.PI, 'e': Math.E };
+
+function factorial(n) {
+    if (n < 0 || n !== Math.floor(n)) throw new Error('Invalid factorial');
+    if (n > 170) throw new Error('Number too large for factorial');
+    let f = 1;
+    for (let i = 2; i <= n; i++) f *= i;
+    return f;
+}
 
 function tokenize(expr) {
     const tokens = [];
@@ -12,6 +20,19 @@ function tokenize(expr) {
     while (i < expr.length) {
         const c = expr[i];
         if (c === ' ' || c === ',') { i++; continue; }
+        // Handle negative numbers: '-' followed by digit or '(' at start or after operator/'('
+        if (c === '-' && (tokens.length === 0 || tokens[tokens.length-1].type === 'op' || tokens[tokens.length-1].value === '(')) {
+            let num = '-';
+            i++;
+            while (i < expr.length && /[0-9.]/.test(expr[i])) num += expr[i++];
+            if (expr[i] === 'e' && /[+-]/.test(expr[i+1])) {
+                num += expr[i++] + expr[i++];
+                while (i < expr.length && /[0-9]/.test(expr[i])) num += expr[i++];
+            }
+            if (num === '-') throw new Error('Invalid negative sign');
+            tokens.push({ type:'num', value: parseFloat(num) });
+            continue;
+        }
         if (/[0-9.]/.test(c)) {
             let num = '';
             while (i < expr.length && /[0-9.]/.test(expr[i])) num += expr[i++];
@@ -32,7 +53,7 @@ function tokenize(expr) {
             else throw new Error('Unknown token: ' + name);
             continue;
         }
-        if ('+-*/^()'.includes(c)) { tokens.push({ type:'op', value: c }); i++; continue; }
+        if ('+-*/^()!'.includes(c)) { tokens.push({ type:'op', value: c }); i++; continue; }
         throw new Error('Invalid character: ' + c);
     }
     return tokens;
@@ -51,10 +72,16 @@ function toRPN(tokens) {
             stack.pop();
             if (stack.length && stack[stack.length-1].type === 'func') output.push(stack.pop());
         }
+        else if (t.value === '!') {
+            // Factorial is postfix - push directly to output
+            output.push(t);
+        }
         else if (t.type === 'op') {
             while (stack.length) {
                 const top = stack[stack.length-1];
-                if (top.type === 'func' || (top.type === 'op' && (PRECEDENCE[top.value] > PRECEDENCE[t.value] || (PRECEDENCE[top.value] === PRECEDENCE[t.value] && !RIGHT_ASSOC[t.value])))) {
+                if (top.value === '!') {
+                    output.push(stack.pop());
+                } else if (top.type === 'func' || (top.type === 'op' && (PRECEDENCE[top.value] > PRECEDENCE[t.value] || (PRECEDENCE[top.value] === PRECEDENCE[t.value] && !RIGHT_ASSOC[t.value])))) {
                     output.push(stack.pop());
                 } else break;
             }
@@ -78,14 +105,24 @@ function evalRPN(rpn) {
             stack.push(FUNCS[t.value](stack.pop()));
         }
         else if (t.type === 'op') {
-            if (stack.length < 2) throw new Error('Missing operand');
-            const b = stack.pop(), a = stack.pop();
-            switch(t.value) {
-                case '+': stack.push(a + b); break;
-                case '-': stack.push(a - b); break;
-                case '*': stack.push(a * b); break;
-                case '/': stack.push(a / b); break;
-                case '^': stack.push(Math.pow(a, b)); break;
+            if (t.value === '!') {
+                // Factorial is unary postfix
+                if (stack.length < 1) throw new Error('Missing operand');
+                const a = stack.pop();
+                stack.push(factorial(a));
+            } else {
+                if (stack.length < 2) throw new Error('Missing operand');
+                const b = stack.pop(), a = stack.pop();
+                switch(t.value) {
+                    case '+': stack.push(a + b); break;
+                    case '-': stack.push(a - b); break;
+                    case '*': stack.push(a * b); break;
+                    case '/': 
+                        if (b === 0) throw new Error('Division by zero');
+                        stack.push(a / b); 
+                        break;
+                    case '^': stack.push(Math.pow(a, b)); break;
+                }
             }
         }
     }
@@ -168,25 +205,48 @@ function sciMemSubtract() {
 function sciCalculate() {
     try {
         let expr = sciExpression;
-        // Handle factorial
-        expr = expr.replace(/(\d+(?:\.\d+)?|\))!/g, (match, base) => {
-            const n = parseFloat(base);
-            if (n < 0 || n !== Math.floor(n)) throw new Error('Invalid factorial');
-            let f = 1;
-            for (let i = 2; i <= n; i++) f *= i;
-            return '(' + f + ')';
-        });
-        // Convert trig functions if in degree mode
+        // Convert trig functions if in degree mode - handle nested expressions properly
         if (degMode) {
-            expr = expr.replace(/sin\(/g, 'sin(').replace(/cos\(/g, 'cos(').replace(/tan\(/g, 'tan(');
-            // Wrap arguments with radians conversion
-            expr = expr.replace(/(sin|cos|tan)\(([^()]+)\)/g, (m, fn, arg) => fn + '(' + (arg) + '*pi/180)');
+            // Parse and wrap trig function arguments with deg2rad conversion
+            // We do this by finding each trig function call and wrapping its argument
+            const convertTrig = (str) => {
+                const trigPattern = /(sin|cos|tan)\(/g;
+                let result = '';
+                let lastIndex = 0;
+                let match;
+                
+                while ((match = trigPattern.exec(str)) !== null) {
+                    const fn = match[1];
+                    const startIdx = match.index + fn.length + 1; // position after 'func('
+                    
+                    // Find the matching closing parenthesis
+                    let depth = 1;
+                    let endIdx = startIdx;
+                    while (endIdx < str.length && depth > 0) {
+                        if (str[endIdx] === '(') depth++;
+                        else if (str[endIdx] === ')') depth--;
+                        endIdx++;
+                    }
+                    
+                    // Extract the argument (everything between the parens)
+                    const arg = str.substring(startIdx, endIdx - 1);
+                    
+                    // Add everything before this match, then the converted function
+                    result += str.substring(lastIndex, match.index) + fn + '((' + arg + ')*pi/180)';
+                    lastIndex = endIdx;
+                }
+                
+                result += str.substring(lastIndex);
+                return result;
+            };
+            
+            expr = convertTrig(expr);
         }
         const result = safeEval(expr);
         sciExpression = formatResult(result);
         sciUpdateDisplay();
-    } catch {
-        document.getElementById('sci-display').innerText = 'Error';
+    } catch(e) {
+        document.getElementById('sci-display').innerText = 'Error: ' + e.message;
         sciExpression = '';
     }
 }
