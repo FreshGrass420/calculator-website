@@ -189,7 +189,11 @@ function sciPercent() {
 }
 
 function sciReciprocal() {
-    sciExpression = '1/(' + sciExpression + ')';
+    if (sciExpression) {
+        sciExpression = '1/(' + sciExpression + ')';
+    } else {
+        sciExpression = '1/';
+    }
     sciUpdateDisplay();
 }
 
