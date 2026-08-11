@@ -1,4 +1,19 @@
 // ============================================================
+// Debounce utility for rate limiting
+// ============================================================
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// ============================================================
 // Safe Expression Parser (shunting-yard algorithm) - replaces eval()
 // Updated: 2026-08-11 - Trigger GitHub Pages rebuild
 // ============================================================
@@ -430,6 +445,9 @@ function copyResult(page) {
         }
     }).catch(() => alert('Copy failed. Please copy manually.'));
 }
+
+// Debounced calculate function (300ms delay)
+const sciCalculateDebounced = debounce(sciCalculate, 300);
 
 function shareResult(page) {
     const data = copyShareData[page] || 'No result available';
