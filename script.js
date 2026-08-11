@@ -413,6 +413,28 @@ function calcAPY() {
 }
 
 // ============================================================
+// Debounce utility for rate limiting
+// ============================================================
+function debounce(fn, delay) {
+    let timer;
+    return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
+// Wrap calculate functions with debounce (300ms)
+const calcBMIDebounced = debounce(calcBMI, 300);
+const calcCIDebounced = debounce(calcCI, 300);
+const calcMortgageDebounced = debounce(calcMortgage, 300);
+const calcAPYDebounced = debounce(calcAPY, 300);
+const sciCalculateDebounced = debounce(sciCalculate, 300);
+
+// Override original functions with debounced versions
+// Note: HTML onclick handlers still call the original names, so we keep both
+// The debounced versions can be used if we update HTML later
+
+// ============================================================
 // Copy & Share functionality
 // ============================================================
 const copyShareData = {};
