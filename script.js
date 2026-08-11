@@ -1,5 +1,6 @@
 // ============================================================
 // Safe Expression Parser (shunting-yard algorithm) - replaces eval()
+// Updated: 2026-08-11 - Trigger GitHub Pages rebuild
 // ============================================================
 const PRECEDENCE = { '+':1, '-':1, '*':2, '/':2, '^':3, '!':4 };
 const RIGHT_ASSOC = { '^': true };
