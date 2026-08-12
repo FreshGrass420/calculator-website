@@ -12,17 +12,17 @@
     <meta name="revisit-after" content="7 days">
     <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self'; frame-ancestors 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; frame-ancestors 'none';">
     <!-- Open Graph -->
     <meta property="og:title" content="Free Mortgage Calculator - Monthly Payments | CalcBro">
     <meta property="og:description" content="Calculate your monthly mortgage payment, total interest, and loan summary. Free, accurate, mobile-friendly mortgage calculator.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://calcbro.netlify.app/mortgage.html">
+    <meta property="og:url" content="https://freshgrass420.github.io/calculator-website/mortgage.html">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Free Mortgage Calculator | CalcBro">
     <meta name="twitter:description" content="Calculate monthly mortgage payments, total interest, and loan summary.">
-    <link rel="canonical" href="https://calcbro.netlify.app/mortgage.html">
+    <link rel="canonical" href="https://freshgrass420.github.io/calculator-website/mortgage.html">
     <link rel="stylesheet" href="styles.css">
     <!-- Structured Data: SoftwareApplication -->
     <script type="application/ld+json">
@@ -32,7 +32,7 @@
         "name": "CalcBro Mortgage Calculator",
         "applicationCategory": "FinanceApplication",
         "operatingSystem": "Web Browser",
-        "url": "https://calcbro.netlify.app/mortgage.html",
+        "url": "https://freshgrass420.github.io/calculator-website/mortgage.html",
         "description": "Free online mortgage calculator to estimate monthly payments, total interest paid, and full loan summary. Enter home price, down payment, interest rate, and loan term for instant results.",
         "offers": {
             "@type": "Offer",
@@ -91,13 +91,13 @@
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "https://calcbro.netlify.app/"
+                "item": "https://freshgrass420.github.io/calculator-website/"
             },
             {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Mortgage Calculator",
-                "item": "https://calcbro.netlify.app/mortgage.html"
+                "item": "https://freshgrass420.github.io/calculator-website/mortgage.html"
             }
         ]
     }
@@ -150,7 +150,6 @@
                 </div>
             </div>
             <div style="display:flex;gap:10px;margin-top:10px;">
-                <button class="btn-calc" id="copy-btn-mortgage" onclick="copyResult('mortgage')" style="width:auto;flex:1;background:#3498db;">📋 Copy Result</button>
                 <button class="btn-calc" onclick="shareResult('mortgage')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
             </div>
         </section>

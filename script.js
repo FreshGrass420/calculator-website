@@ -5,7 +5,6 @@ function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
         const later = () => {
-            clearTimeout(timeout);
             func(...args);
         };
         clearTimeout(timeout);
@@ -168,17 +167,23 @@ function sciPercent() {
 }
 
 function sciReciprocal() {
-    sciExpression = '1/(' + sciExpression + ')';
+    if (!sciExpression) {
+        sciExpression = '1/';
+    } else {
+        sciExpression = '1/(' + sciExpression + ')';
+    }
     sciUpdateDisplay();
 }
 
 function sciMemClear() { sciMemory = 0; }
 function sciMemRecall() { sciExpression += String(sciMemory); sciUpdateDisplay(); }
 function sciMemAdd() {
-    try { sciMemory += safeEval(sciExpression); } catch {}
+    try { sciMemory += safeEval(sciExpression); }
+    catch(e) { document.getElementById('sci-display').innerText = 'Error'; }
 }
 function sciMemSubtract() {
-    try { sciMemory -= safeEval(sciExpression); } catch {}
+    try { sciMemory -= safeEval(sciExpression); }
+    catch(e) { document.getElementById('sci-display').innerText = 'Error'; }
 }
 
 function sciCalculate() {
@@ -192,11 +197,9 @@ function sciCalculate() {
             for (let i = 2; i <= n; i++) f *= i;
             return '(' + f + ')';
         });
-        // Convert trig functions if in degree mode
+        // Convert trig function arguments from degrees to radians
         if (degMode) {
-            expr = expr.replace(/sin\(/g, 'sin(').replace(/cos\(/g, 'cos(').replace(/tan\(/g, 'tan(');
-            // Wrap arguments with radians conversion
-            expr = expr.replace(/(sin|cos|tan)\(([^()]+)\)/g, (m, fn, arg) => fn + '(' + (arg) + '*pi/180)');
+            expr = expr.replace(/(sin|cos|tan)\(([^()]+)\)/g, (m, fn, arg) => fn + '((' + arg + ')*pi/180)');
         }
         const result = safeEval(expr);
         sciExpression = formatResult(result);
@@ -220,7 +223,7 @@ document.addEventListener('keydown', function(e) {
     if (/[0-9.]/.test(key)) { sciInput(key); e.preventDefault(); }
     else if (['+', '-', '*', '/', '(', ')'].includes(key)) { sciInput(key); e.preventDefault(); }
     else if (key === '^') { sciInput('^'); e.preventDefault(); }
-    else if (key === 'Enter') { sciCalculate(); e.preventDefault(); }
+    else if (key === 'Enter') { sciCalculateDebounced(); e.preventDefault(); }
     else if (key === 'Backspace') { sciBackspace(); e.preventDefault(); }
     else if (key === 'Escape') { sciClear(); e.preventDefault(); }
     else if (key === 'p' || key === 'P') { sciInput('pi'); e.preventDefault(); }
@@ -382,6 +385,13 @@ function convertTemp(source) {
     } else if (source === 'k') {
         const val = parseFloat(k.value);
         if (!isNaN(val)) {
+            if (val < 0) {
+                k.value = '';
+                c.value = '';
+                f.value = '';
+                alert('Kelvin cannot be below absolute zero (0 K).');
+                return;
+            }
             c.value = (val - 273.15).toFixed(2);
             f.value = ((val - 273.15) * 9/5 + 32).toFixed(2);
         }
@@ -432,19 +442,6 @@ function calcAPY() {
 // Copy & Share functionality
 // ============================================================
 const copyShareData = {};
-
-function copyResult(page) {
-    const data = copyShareData[page] || 'No result available';
-    navigator.clipboard.writeText(data).then(() => {
-        const btn = document.getElementById('copy-btn-' + page);
-        if (btn) {
-            const original = btn.innerText;
-            btn.innerText = '✓ Copied!';
-            btn.style.background = '#2ecc71';
-            setTimeout(() => { btn.innerText = original; btn.style.background = ''; }, 2000);
-        }
-    }).catch(() => alert('Copy failed. Please copy manually.'));
-}
 
 // Debounced calculate function (300ms delay)
 const sciCalculateDebounced = debounce(sciCalculate, 300);
