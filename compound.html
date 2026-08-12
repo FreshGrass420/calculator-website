@@ -12,17 +12,17 @@
     <meta name="revisit-after" content="7 days">
     <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self'; frame-ancestors 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; frame-ancestors 'none';">
     <!-- Open Graph -->
     <meta property="og:title" content="Free Compound Interest Calculator | CalcBro">
     <meta property="og:description" content="Calculate compound interest with monthly or weekly contributions. See your investment grow over time. Free, accurate, mobile-friendly.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://calcbro.netlify.app/compound.html">
+    <meta property="og:url" content="https://freshgrass420.github.io/calculator-website/compound.html">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Free Compound Interest Calculator | CalcBro">
     <meta name="twitter:description" content="Calculate compound interest with adjustable contributions and frequency. See your investment growth.">
-    <link rel="canonical" href="https://calcbro.netlify.app/compound.html">
+    <link rel="canonical" href="https://freshgrass420.github.io/calculator-website/compound.html">
     <link rel="stylesheet" href="styles.css">
     <!-- Structured Data: SoftwareApplication -->
     <script type="application/ld+json">
@@ -32,7 +32,7 @@
         "name": "CalcBro Compound Interest Calculator",
         "applicationCategory": "FinanceApplication",
         "operatingSystem": "Web Browser",
-        "url": "https://calcbro.netlify.app/compound.html",
+        "url": "https://freshgrass420.github.io/calculator-website/compound.html",
         "description": "Free online compound interest calculator with adjustable contribution frequency. Calculate investment growth with initial investment, recurring contributions, and annual interest rate.",
         "offers": {
             "@type": "Offer",
@@ -91,13 +91,13 @@
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "https://calcbro.netlify.app/"
+                "item": "https://freshgrass420.github.io/calculator-website/"
             },
             {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Compound Interest Calculator",
-                "item": "https://calcbro.netlify.app/compound.html"
+                "item": "https://freshgrass420.github.io/calculator-website/compound.html"
             }
         ]
     }
@@ -154,8 +154,8 @@
                 </div>
             </div>
             <div style="display:flex;gap:10px;margin-top:10px;">
-                <button class="btn-calc" id="copy-btn-ci" onclick="copyResult('' + key + '\')')" style="width:auto;flex:1;background:#3498db;">📋 Copy Result</button>
-                <button class="btn-calc" onclick="shareResult('' + key + '\')')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
+                <button class="btn-calc" id="copy-btn-ci" 
+                <button class="btn-calc" onclick="shareResult('ci')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
             </div>
         </section>
 

@@ -12,17 +12,17 @@
     <meta name="revisit-after" content="7 days">
     <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self'; frame-ancestors 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; frame-ancestors 'none';">
     <!-- Open Graph -->
     <meta property="og:title" content="Free BMI Calculator Online - Body Mass Index | CalcBro">
     <meta property="og:description" content="Calculate your Body Mass Index (BMI) instantly. View health categories, BMI chart, and formula explanation. Free, fast, mobile-friendly.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://calcbro.netlify.app/bmi.html">
+    <meta property="og:url" content="https://freshgrass420.github.io/calculator-website/bmi.html">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Free BMI Calculator Online - Body Mass Index | CalcBro">
     <meta name="twitter:description" content="Calculate your Body Mass Index (BMI) instantly. View health categories and BMI chart.">
-    <link rel="canonical" href="https://calcbro.netlify.app/bmi.html">
+    <link rel="canonical" href="https://freshgrass420.github.io/calculator-website/bmi.html">
     <link rel="stylesheet" href="styles.css">
     <!-- Structured Data: SoftwareApplication -->
     <script type="application/ld+json">
@@ -32,7 +32,7 @@
         "name": "CalcBro BMI Calculator",
         "applicationCategory": "HealthApplication",
         "operatingSystem": "Web Browser",
-        "url": "https://calcbro.netlify.app/bmi.html",
+        "url": "https://freshgrass420.github.io/calculator-website/bmi.html",
         "description": "Free online BMI calculator to check your Body Mass Index and health category. Enter your height and weight to see your BMI, classification, and health risk level.",
         "offers": {
             "@type": "Offer",
@@ -91,13 +91,13 @@
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "https://calcbro.netlify.app/"
+                "item": "https://freshgrass420.github.io/calculator-website/"
             },
             {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "BMI Calculator",
-                "item": "https://calcbro.netlify.app/bmi.html"
+                "item": "https://freshgrass420.github.io/calculator-website/bmi.html"
             }
         ]
     }
@@ -143,7 +143,6 @@
                 </div>
             </div>
             <div style="display:flex;gap:10px;margin-top:10px;">
-                <button class="btn-calc" id="copy-btn-bmi" onclick="copyResult('bmi')" style="width:auto;flex:1;background:#3498db;">📋 Copy Result</button>
                 <button class="btn-calc" onclick="shareResult('bmi')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
             </div>
         </section>
