@@ -131,9 +131,9 @@
             <h2>🌡️ Temperature Converter</h2>
             <div class="calc-grid">
                 <div>
-                    <div class="input-group"><label>Celsius (°C)</label><input type="number" id="temp-c" oninput="convertTemp('c')" placeholder="0"></div>
-                    <div class="input-group"><label>Fahrenheit (°F)</label><input type="number" id="temp-f" oninput="convertTemp('f')" placeholder="32"></div>
-                    <div class="input-group"><label>Kelvin (K)</label><input type="number" id="temp-k" oninput="convertTemp('k')" placeholder="273.15"></div>
+                    <div class="input-group"><label>Celsius (°C)</label><input type="number" id="temp-c" placeholder="0"></div>
+                    <div class="input-group"><label>Fahrenheit (°F)</label><input type="number" id="temp-f" placeholder="32"></div>
+                    <div class="input-group"><label>Kelvin (K)</label><input type="number" id="temp-k" placeholder="273.15"></div>
                 </div>
                 <div class="result-box">
                     <h3>How it works</h3>
@@ -142,8 +142,7 @@
                 </div>
             </div>
             <div style="display:flex;gap:10px;margin-top:10px;">
-                <button class="btn-calc" id="copy-btn-temp" 
-                <button class="btn-calc" onclick="shareResult('temp')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
+                <button class="btn-calc" id="temp-share-btn" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
             </div>
         </section>
 
