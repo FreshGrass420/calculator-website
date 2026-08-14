@@ -133,7 +133,7 @@
                 <div>
                     <div class="input-group"><label>Height (cm)</label><input type="number" id="bmi-height" placeholder="175"></div>
                     <div class="input-group"><label>Weight (kg)</label><input type="number" id="bmi-weight" placeholder="70"></div>
-                    <button class="btn-calc" onclick="calcBMI()">Calculate BMI</button>
+                    <button class="btn-calc" id="bmi-calc-btn">Calculate BMI</button>
                 </div>
                 <div class="result-box" id="bmi-result" style="display:none;">
                     <h3>Your BMI</h3>
@@ -143,7 +143,7 @@
                 </div>
             </div>
             <div style="display:flex;gap:10px;margin-top:10px;">
-                <button class="btn-calc" onclick="shareResult('bmi')" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
+                <button class="btn-calc" id="bmi-share-btn" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
             </div>
         </section>
 

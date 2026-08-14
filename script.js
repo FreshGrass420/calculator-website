@@ -457,3 +457,82 @@ function shareResult(page) {
         }).catch(() => alert('Sharing not supported. Please copy manually.'));
     }
 }
+
+// ============================================================
+// Event listener wiring (no inline onclick/oninput handlers)
+// ============================================================
+function initEventListeners() {
+    // ---- BMI ----
+    const bmiCalc = document.getElementById('bmi-calc-btn');
+    if (bmiCalc) bmiCalc.addEventListener('click', calcBMI);
+    const bmiShare = document.getElementById('bmi-share-btn');
+    if (bmiShare) bmiShare.addEventListener('click', () => shareResult('bmi'));
+
+    // ---- Compound Interest ----
+    const ciCalc = document.getElementById('ci-calc-btn');
+    if (ciCalc) ciCalc.addEventListener('click', calcCI);
+    const ciShare = document.getElementById('ci-share-btn');
+    if (ciShare) ciShare.addEventListener('click', () => shareResult('ci'));
+
+    // ---- Mortgage ----
+    const mgCalc = document.getElementById('mg-calc-btn');
+    if (mgCalc) mgCalc.addEventListener('click', calcMortgage);
+    const mgShare = document.getElementById('mg-share-btn');
+    if (mgShare) mgShare.addEventListener('click', () => shareResult('mortgage'));
+
+    // ---- Temperature ----
+    const tempC = document.getElementById('temp-c');
+    const tempF = document.getElementById('temp-f');
+    const tempK = document.getElementById('temp-k');
+    if (tempC) tempC.addEventListener('input', () => convertTemp('c'));
+    if (tempF) tempF.addEventListener('input', () => convertTemp('f'));
+    if (tempK) tempK.addEventListener('input', () => convertTemp('k'));
+    const tempShare = document.getElementById('temp-share-btn');
+    if (tempShare) tempShare.addEventListener('click', () => shareResult('temp'));
+
+    // ---- APY ----
+    const apyCalc = document.getElementById('apy-calc-btn');
+    if (apyCalc) apyCalc.addEventListener('click', calcAPY);
+    const apyShare = document.getElementById('apy-share-btn');
+    if (apyShare) apyShare.addEventListener('click', () => shareResult('apy'));
+
+    // ---- Scientific calculator ----
+    const sciGrid = document.querySelector('.sci-grid');
+    if (sciGrid) {
+        sciGrid.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const action = this.dataset.action;
+                if (action) {
+                    switch (action) {
+                        case 'sciMemClear': sciMemClear(); break;
+                        case 'sciMemRecall': sciMemRecall(); break;
+                        case 'sciMemAdd': sciMemAdd(); break;
+                        case 'sciMemSubtract': sciMemSubtract(); break;
+                        case 'sciToggleDeg': sciToggleDeg(); break;
+                        case 'sciFactorial': sciFactorial(); break;
+                        case 'sciReciprocal': sciReciprocal(); break;
+                        case 'sciPercent': sciPercent(); break;
+                        case 'sciCalculate': sciCalculate(); break;
+                        case 'sciClear': sciClear(); break;
+                        case 'sciBackspace': sciBackspace(); break;
+                    }
+                    return;
+                }
+                const fn = this.dataset.fn;
+                if (fn) {
+                    sciFn(fn);
+                    return;
+                }
+                const val = this.dataset.val;
+                if (val) {
+                    sciInput(val);
+                }
+            });
+        });
+    }
+    const sciShare = document.getElementById('sci-share-btn');
+    if (sciShare) sciShare.addEventListener('click', () => shareResult('sci'));
+}
+
+// DOM is parsed before this script runs (script tag at end of <body>)
+initEventListeners();
