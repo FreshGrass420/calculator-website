@@ -98,63 +98,62 @@
             <h2>🔬 Scientific Calculator</h2>
             <div class="sci-display" id="sci-display">0</div>
             <div class="sci-grid">
-                <!-- Memory and Mode Row -->
+                <!-- Memory & Mode Row -->
                 <button class="sci-btn mem" data-action="sciMemClear">MC</button>
                 <button class="sci-btn mem" data-action="sciMemRecall">MR</button>
                 <button class="sci-btn mem" data-action="sciMemAdd">M+</button>
                 <button class="sci-btn mem" data-action="sciMemSubtract">M−</button>
+
+                <!-- Trig & Mode Row -->
                 <button class="sci-btn fn" id="deg-rad-toggle" data-action="sciToggleDeg">RAD</button>
-                
-                <!-- Scientific Functions Row -->
                 <button class="sci-btn fn" data-fn="sin">sin</button>
                 <button class="sci-btn fn" data-fn="cos">cos</button>
                 <button class="sci-btn fn" data-fn="tan">tan</button>
+
+                <!-- Logs & Powers Row -->
                 <button class="sci-btn fn" data-fn="log">log</button>
                 <button class="sci-btn fn" data-fn="ln">ln</button>
-                
-                <!-- More Functions Row -->
                 <button class="sci-btn fn" data-fn="sqrt">√</button>
-                <button class="sci-btn op" data-val="^">x^y</button>
+                <button class="sci-btn fn" data-fn="square">x²</button>
+
+                <!-- Special Functions Row -->
                 <button class="sci-btn fn" data-action="sciFactorial">x!</button>
                 <button class="sci-btn fn" data-action="sciReciprocal">1/x</button>
-                <button class="sci-btn fn" data-action="sciPercent">%</button>
-                
-                <!-- Parentheses and Operators Row -->
+                <button class="sci-btn op" data-val="^">x^y</button>
+                <button class="sci-btn fn" data-val="pi">π</button>
+
+                <!-- Parens & Modifiers Row -->
                 <button class="sci-btn op" data-val="(">(</button>
                 <button class="sci-btn op" data-val=")">)</button>
-                <button class="sci-btn op" data-val="/">÷</button>
-                <button class="sci-btn op" data-val="*">×</button>
-                <button class="sci-btn op" data-val="-">−</button>
-                
-                <!-- Numbers 7-8-9 Row -->
+                <button class="sci-btn fn" data-action="sciPercent">%</button>
+                <button class="sci-btn backspace-btn" data-action="sciBackspace">⌫</button>
+
+                <!-- Numbers 7-9 + operator Row -->
                 <button class="sci-btn" data-val="7">7</button>
                 <button class="sci-btn" data-val="8">8</button>
                 <button class="sci-btn" data-val="9">9</button>
-                <button class="sci-btn op" data-val="+">+</button>
-                <button class="sci-btn fn" data-val="pi">π</button>
-                
-                <!-- Numbers 4-5-6 Row -->
+                <button class="sci-btn op" data-val="/">÷</button>
+
+                <!-- Numbers 4-6 + operator Row -->
                 <button class="sci-btn" data-val="4">4</button>
                 <button class="sci-btn" data-val="5">5</button>
                 <button class="sci-btn" data-val="6">6</button>
-                <button class="sci-btn fn" data-fn="square">x²</button>
-                <button class="sci-btn" style="visibility:hidden;"></button>
-                
-                <!-- Numbers 1-2-3 Row -->
+                <button class="sci-btn op" data-val="*">×</button>
+
+                <!-- Numbers 1-3 + operator Row -->
                 <button class="sci-btn" data-val="1">1</button>
                 <button class="sci-btn" data-val="2">2</button>
                 <button class="sci-btn" data-val="3">3</button>
-                <button class="sci-btn" style="visibility:hidden;"></button>
-                <button class="sci-btn" style="visibility:hidden;"></button>
-                
-                <!-- Numbers 0 and Special Row -->
-                <button class="sci-btn" data-val="0">0</button>
+                <button class="sci-btn op" data-val="-">−</button>
+
+                <!-- Numbers 0, decimal, equals Row -->
+                <button class="sci-btn zero-btn" data-val="0">0</button>
                 <button class="sci-btn" data-val=".">.</button>
+                <button class="sci-btn op" data-val="+">+</button>
                 <button class="sci-btn equals-btn" data-action="sciCalculate">=</button>
-                
-                <!-- Clear and Backspace Row -->
-                <button class="sci-btn clear-btn" data-action="sciClear">C</button>
-                <button class="sci-btn backspace-btn" data-action="sciBackspace">⌫</button>
+
+                <!-- Clear Row -->
+                <button class="sci-btn fn clear-btn clear-full" data-action="sciClear">C</button>
             </div>
         </section>
 
