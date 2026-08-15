@@ -459,6 +459,26 @@ function shareResult(page) {
 }
 
 // ============================================================
+// Night Mode
+// ============================================================
+function initNightMode() {
+    const toggle = document.getElementById('nm-toggle');
+    if (!toggle) return;
+
+    // Restore saved preference
+    if (localStorage.getItem('calcbro-nightmode') === '1') {
+        document.body.classList.add('nightmode');
+        toggle.innerHTML = '&#127774;'; // sun icon
+    }
+
+    toggle.addEventListener('click', function () {
+        const on = document.body.classList.toggle('nightmode');
+        toggle.innerHTML = on ? '&#127774;' : '&#127769;'; // sun / moon
+        localStorage.setItem('calcbro-nightmode', on ? '1' : '0');
+    });
+}
+
+// ============================================================
 // Event listener wiring (no inline onclick/oninput handlers)
 // ============================================================
 function initEventListeners() {
@@ -536,3 +556,4 @@ function initEventListeners() {
 
 // DOM is parsed before this script runs (script tag at end of <body>)
 initEventListeners();
+initNightMode();
