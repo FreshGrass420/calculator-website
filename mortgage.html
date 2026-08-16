@@ -132,25 +132,62 @@
             <div class="calc-grid">
                 <div>
                     <div class="input-group"><label>Home Price ($)</label><input type="number" id="mg-price" placeholder="300000"></div>
-                    <div class="input-group"><label>Down Payment ($)</label><input type="number" id="mg-down" placeholder="60000"></div>
-                    <div class="input-group"><label>Interest Rate (%)</label><input type="number" id="mg-rate" placeholder="6.5"></div>
-                    <div class="input-group"><label>Loan Term (years)</label><input type="number" id="mg-years" value="30"></div>
-                    <div class="input-group"><label>Property Tax (annual $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-prop-tax" placeholder="3600"></div>
-                    <div class="input-group"><label>Insurance (annual $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-insurance" placeholder="1200"></div>
-                    <div class="input-group"><label>PMI (monthly $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-pmi" placeholder="0"></div>
-                    <div class="input-group"><label>HOA (monthly $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-hoa" placeholder="0"></div>
+                    <div class="input-row">
+                        <div class="input-group"><label>Down Payment</label><input type="number" id="mg-down" placeholder="60000" min="0" step="any"></div>
+                        <div class="input-group down-mode"><label>Mode</label><select id="mg-down-mode" title="Down payment input mode"><option value="$" selected>$</option><option value="%">%</option></select></div>
+                    </div>
+                    <div class="input-group"><label>Interest Rate (%)</label><input type="number" id="mg-rate" placeholder="6.5" min="0" step="any"></div>
+                    <div class="input-group"><label>Loan Term (years)</label><input type="number" id="mg-years" value="30" min="1" step="any"></div>
+                    <div class="input-group"><label>Loan Start Date <span style="color:#999;font-weight:normal;">— optional</span></label><input type="month" id="mg-start-date"></div>
+                    <div class="input-group"><label>Property Tax (annual $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-prop-tax" placeholder="3600" min="0" step="any"></div>
+                    <div class="input-group"><label>Insurance (annual $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-insurance" placeholder="1200" min="0" step="any"></div>
+                    <div class="input-group"><label>PMI (monthly $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-pmi" placeholder="0" min="0" step="any"></div>
+                    <div class="input-group"><label>HOA (monthly $) <span style="color:#999;font-weight:normal;">— optional</span></label><input type="number" id="mg-hoa" placeholder="0" min="0" step="any"></div>
                     <button class="btn-calc" id="mg-calc-btn">Calculate</button>
                 </div>
                 <div class="result-box" id="mg-result" style="display:none;">
                     <h3>Mortgage Summary</h3>
                     <div class="result-value" id="mg-monthly"></div>
                     <p style="margin-top:10px;">Loan Amount: <strong id="mg-loan"></strong></p>
+                    <p>Down Payment: <strong id="mg-down-display"></strong></p>
                     <p>Total Interest: <strong id="mg-interest"></strong></p>
                     <p>Total Paid: <strong id="mg-total"></strong></p>
+                    <p class="payoff-note" id="mg-payoff"></p>
                 </div>
             </div>
             <div style="display:flex;gap:10px;margin-top:10px;">
                 <button class="btn-calc" id="mg-share-btn" style="width:auto;flex:1;background:#2ecc71;">📤 Share</button>
+            </div>
+
+            <div class="mg-results-grid" id="mg-breakdown-section" style="display:none;">
+                <div class="result-box">
+                    <h3>Payment Breakdown</h3>
+                    <table class="result-table">
+                        <thead><tr><th>Component</th><th>Monthly</th><th>Total</th></tr></thead>
+                        <tbody id="mg-breakdown-body"></tbody>
+                    </table>
+                </div>
+                <div class="result-box">
+                    <h3>Payment Distribution</h3>
+                    <div class="mg-donut-wrap">
+                        <canvas id="mg-donut" width="220" height="220" role="img" aria-label="Donut chart of monthly payment distribution"></canvas>
+                        <div class="mg-donut-legend" id="mg-donut-legend"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="amort-wrap" id="mg-amort-section" style="display:none;">
+                <h3>Amortization Schedule</h3>
+                <div class="amort-toggle">
+                    <button class="btn-calc amort-mode-btn active" id="mg-amort-annual" type="button">Annual</button>
+                    <button class="btn-calc amort-mode-btn" id="mg-amort-monthly" type="button">Monthly</button>
+                </div>
+                <div class="amort-table-wrap">
+                    <table class="amort-table">
+                        <thead><tr><th>Year / Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Ending Balance</th></tr></thead>
+                        <tbody id="mg-amort-body"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 

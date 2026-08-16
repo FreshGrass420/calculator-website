@@ -320,11 +320,18 @@ function calcCI() {
 }
 
 // ============================================================
-// Mortgage Calculator with tax, insurance, PMI, HOA
+// Mortgage Calculator with tax, insurance, PMI, HOA,
+// payment breakdown, donut chart, and amortization schedule
 // ============================================================
-function calcMortgage() {
+const MORTGAGE_INPUT_IDS = ['mg-price', 'mg-down', 'mg-rate', 'mg-years', 'mg-prop-tax', 'mg-insurance', 'mg-pmi', 'mg-hoa'];
+const MORTGAGE_DONUT_COLORS = { pni: '#667eea', tax: '#f39c12', insurance: '#2ecc71', pmi: '#e74c3c', hoa: '#9b59b6' };
+let amortSchedule = [];
+
+function fmtMoney(v) { return '$' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+function calcMortgage(silent) {
     const price = parseFloat(document.getElementById('mg-price').value);
-    const down = parseFloat(document.getElementById('mg-down').value) || 0;
+    const downInput = parseFloat(document.getElementById('mg-down').value);
     const rate = parseFloat(document.getElementById('mg-rate').value);
     const years = parseFloat(document.getElementById('mg-years').value);
     const propTax = parseFloat(document.getElementById('mg-prop-tax').value) || 0;
@@ -332,18 +339,30 @@ function calcMortgage() {
     const pmi = parseFloat(document.getElementById('mg-pmi').value) || 0;
     const hoa = parseFloat(document.getElementById('mg-hoa').value) || 0;
 
-    if (isNaN(price) || price <= 0) { alert('Please enter a valid home price greater than 0.'); return; }
-    if (isNaN(years) || years <= 0) { alert('Please enter a valid loan term greater than 0.'); return; }
-    if (isNaN(rate) || rate < 0) { alert('Please enter a valid interest rate (0 or greater).'); return; }
+    const fail = (msg) => { if (!silent) alert(msg); return false; };
+
+    if (isNaN(price) || price <= 0) return fail('Please enter a valid home price greater than 0.');
+    if (isNaN(years) || years <= 0) return fail('Please enter a valid loan term greater than 0.');
+    if (isNaN(rate) || rate < 0) return fail('Please enter a valid interest rate (0 or greater).');
+    if (isNaN(downInput) || downInput < 0) return fail('Please enter a valid down payment (0 or greater).');
+    if (propTax < 0 || insurance < 0 || pmi < 0 || hoa < 0) return fail('Optional costs cannot be negative.');
+
+    const downMode = document.getElementById('mg-down-mode').value;
+    let down = downInput;
+    if (downMode === '%') {
+        if (downInput > 100) return fail('Down payment percentage cannot exceed 100%.');
+        down = price * downInput / 100;
+    }
+    if (down >= price) return fail('Down payment must be less than the home price.');
 
     const loan = price - down;
-    const n = years * 12;
+    const n = Math.round(years * 12);
+    const monthlyRate = rate / 100 / 12;
 
     let monthlyPnI;
     if (rate === 0) {
         monthlyPnI = loan / n;
     } else {
-        const monthlyRate = rate / 100 / 12;
         monthlyPnI = (loan * monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1);
     }
 
@@ -352,14 +371,160 @@ function calcMortgage() {
     const totalMonthly = monthlyPnI + monthlyTax + monthlyInsurance + pmi + hoa;
     const totalPaid = totalMonthly * n;
     const totalInterest = (monthlyPnI * n) - loan;
+    const downPct = (down / price) * 100;
 
-    const fmt = v => '$' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    document.getElementById('mg-monthly').innerText = fmt(totalMonthly) + ' /mo';
-    document.getElementById('mg-loan').innerText = fmt(loan);
-    document.getElementById('mg-interest').innerText = fmt(totalInterest);
-    document.getElementById('mg-total').innerText = fmt(totalPaid);
+    document.getElementById('mg-monthly').innerText = fmtMoney(totalMonthly) + ' /mo';
+    document.getElementById('mg-loan').innerText = fmtMoney(loan);
+    document.getElementById('mg-down-display').innerText = fmtMoney(down) + ' (' + downPct.toFixed(1) + '%)';
+    document.getElementById('mg-interest').innerText = fmtMoney(totalInterest);
+    document.getElementById('mg-total').innerText = fmtMoney(totalPaid);
+    document.getElementById('mg-payoff').innerText = 'Payoff Date: ' + formatPayoffDate(n);
     document.getElementById('mg-result').style.display = 'block';
-    copyShareData.mortgage = 'Monthly Payment: ' + fmt(totalMonthly) + ' | Loan: ' + fmt(loan) + ' | Interest: ' + fmt(totalInterest);
+
+    renderBreakdownTable(monthlyPnI, monthlyTax, monthlyInsurance, pmi, hoa, totalMonthly, n);
+    renderDonutChart(monthlyPnI, monthlyTax, monthlyInsurance, pmi, hoa);
+    buildAmortization(loan, monthlyRate, n, monthlyPnI);
+    setAmortMode('annual');
+
+    copyShareData.mortgage = 'Monthly Payment: ' + fmtMoney(totalMonthly) + ' | Loan: ' + fmtMoney(loan) + ' | Interest: ' + fmtMoney(totalInterest) + ' | Payoff: ' + formatPayoffDate(n);
+    return true;
+}
+
+function formatPayoffDate(totalMonths) {
+    const startEl = document.getElementById('mg-start-date');
+    let start = new Date();
+    if (startEl && startEl.value) {
+        const parts = startEl.value.split('-');
+        start = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, 1);
+    }
+    const payoff = new Date(start.getFullYear(), start.getMonth() + totalMonths, 1);
+    return payoff.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+
+function renderBreakdownTable(monthlyPnI, monthlyTax, monthlyInsurance, pmi, hoa, totalMonthly, n) {
+    const rows = [
+        { label: 'Principal & Interest', monthly: monthlyPnI },
+        { label: 'Property Tax', monthly: monthlyTax },
+        { label: 'Home Insurance', monthly: monthlyInsurance },
+        { label: 'PMI', monthly: pmi },
+        { label: 'HOA', monthly: hoa }
+    ];
+    const body = document.getElementById('mg-breakdown-body');
+    body.innerHTML = '';
+    rows.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + r.label + '</td><td>' + fmtMoney(r.monthly) + '</td><td>' + fmtMoney(r.monthly * n) + '</td>';
+        body.appendChild(tr);
+    });
+    const totalRow = document.createElement('tr');
+    totalRow.className = 'total-row';
+    totalRow.innerHTML = '<td>Total Monthly Payment</td><td>' + fmtMoney(totalMonthly) + '</td><td>' + fmtMoney(totalMonthly * n) + '</td>';
+    body.appendChild(totalRow);
+    document.getElementById('mg-breakdown-section').style.display = 'grid';
+}
+
+function renderDonutChart(monthlyPnI, monthlyTax, monthlyInsurance, pmi, hoa) {
+    const data = [
+        { label: 'Principal & Interest', value: monthlyPnI, color: MORTGAGE_DONUT_COLORS.pni },
+        { label: 'Property Tax', value: monthlyTax, color: MORTGAGE_DONUT_COLORS.tax },
+        { label: 'Home Insurance', value: monthlyInsurance, color: MORTGAGE_DONUT_COLORS.insurance },
+        { label: 'PMI', value: pmi, color: MORTGAGE_DONUT_COLORS.pmi },
+        { label: 'HOA', value: hoa, color: MORTGAGE_DONUT_COLORS.hoa }
+    ].filter(d => d.value > 0);
+
+    const canvas = document.getElementById('mg-donut');
+    const ctx = canvas.getContext('2d');
+    const total = data.reduce((s, d) => s + d.value, 0) || 1;
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const outerR = Math.min(cx, cy) - 4;
+    const innerR = outerR * 0.62;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let angle = -Math.PI / 2;
+    data.forEach(d => {
+        const end = angle + (d.value / total) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, outerR, angle, end);
+        ctx.arc(cx, cy, innerR, end, angle, true);
+        ctx.closePath();
+        ctx.fillStyle = d.color;
+        ctx.fill();
+        angle = end;
+    });
+
+    const textColor = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#333';
+    ctx.fillStyle = textColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = 'bold 17px sans-serif';
+    ctx.fillText(fmtMoney(total), cx, cy - 8);
+    ctx.font = '12px sans-serif';
+    ctx.fillText('/mo', cx, cy + 12);
+
+    const legend = document.getElementById('mg-donut-legend');
+    legend.innerHTML = data.map(d => {
+        const pct = ((d.value / total) * 100).toFixed(1);
+        return '<span style="display:inline-block;margin:0 8px 4px 0;"><span style="display:inline-block;width:10px;height:10px;background:' + d.color + ';border-radius:2px;margin-right:4px;"></span>' + d.label + ' ' + pct + '%</span>';
+    }).join('');
+}
+
+function buildAmortization(loan, monthlyRate, n, monthlyPnI) {
+    amortSchedule = [];
+    let balance = loan;
+    for (let i = 1; i <= n; i++) {
+        const interest = balance * monthlyRate;
+        let principal = monthlyPnI - interest;
+        if (principal > balance) principal = balance;
+        balance -= principal;
+        if (balance < 0.005) balance = 0;
+        amortSchedule.push({ month: i, payment: monthlyPnI, principal: principal, interest: interest, balance: balance });
+    }
+}
+
+function renderAmortizationTable(mode) {
+    const body = document.getElementById('mg-amort-body');
+    body.innerHTML = '';
+    if (mode === 'monthly') {
+        amortSchedule.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = '<td>Month ' + row.month + '</td><td>' + fmtMoney(row.payment) + '</td><td>' + fmtMoney(row.principal) + '</td><td>' + fmtMoney(row.interest) + '</td><td>' + fmtMoney(row.balance) + '</td>';
+            body.appendChild(tr);
+        });
+        return;
+    }
+    const totalYears = Math.ceil(amortSchedule.length / 12);
+    for (let y = 1; y <= totalYears; y++) {
+        const rows = amortSchedule.filter(r => Math.ceil(r.month / 12) === y);
+        const principal = rows.reduce((s, r) => s + r.principal, 0);
+        const interest = rows.reduce((s, r) => s + r.interest, 0);
+        const last = rows[rows.length - 1];
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td>Year ' + y + '</td><td>' + fmtMoney(principal + interest) + '</td><td>' + fmtMoney(principal) + '</td><td>' + fmtMoney(interest) + '</td><td>' + fmtMoney(last.balance) + '</td>';
+        body.appendChild(tr);
+    }
+}
+
+function setAmortMode(mode) {
+    if (!amortSchedule.length) return;
+    document.getElementById('mg-amort-annual').classList.toggle('active', mode === 'annual');
+    document.getElementById('mg-amort-monthly').classList.toggle('active', mode === 'monthly');
+    renderAmortizationTable(mode);
+    document.getElementById('mg-amort-section').style.display = 'block';
+}
+
+function handleDownModeChange() {
+    const mode = document.getElementById('mg-down-mode').value;
+    const downEl = document.getElementById('mg-down');
+    if (mode === '%') {
+        downEl.placeholder = '20';
+        downEl.setAttribute('max', '100');
+    } else {
+        downEl.placeholder = '60000';
+        downEl.removeAttribute('max');
+    }
+    if (document.getElementById('mg-result').style.display !== 'none') calcMortgage(true);
 }
 
 // ============================================================
@@ -496,9 +661,30 @@ function initEventListeners() {
 
     // ---- Mortgage ----
     const mgCalc = document.getElementById('mg-calc-btn');
-    if (mgCalc) mgCalc.addEventListener('click', calcMortgage);
+    if (mgCalc) mgCalc.addEventListener('click', () => calcMortgage(false));
     const mgShare = document.getElementById('mg-share-btn');
     if (mgShare) mgShare.addEventListener('click', () => shareResult('mortgage'));
+    const mgDownMode = document.getElementById('mg-down-mode');
+    if (mgDownMode) mgDownMode.addEventListener('change', handleDownModeChange);
+    const mgAmortAnnual = document.getElementById('mg-amort-annual');
+    if (mgAmortAnnual) mgAmortAnnual.addEventListener('click', () => setAmortMode('annual'));
+    const mgAmortMonthly = document.getElementById('mg-amort-monthly');
+    if (mgAmortMonthly) mgAmortMonthly.addEventListener('click', () => setAmortMode('monthly'));
+    MORTGAGE_INPUT_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); calcMortgage(false); }
+        });
+        el.addEventListener('input', function () {
+            if (document.getElementById('mg-result').style.display !== 'none') calcMortgage(true);
+        });
+    });
+    const mgStartDate = document.getElementById('mg-start-date');
+    if (mgStartDate) {
+        const now = new Date();
+        mgStartDate.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    }
 
     // ---- Temperature ----
     const tempC = document.getElementById('temp-c');
