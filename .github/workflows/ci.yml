@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  # --- 1. JS syntax check ---
+  js-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check JS syntax with node
+        run: |
+          echo "Checking JavaScript files..."
+          for f in $(find . -name '*.js' -not -path './node_modules/*'); do
+            echo "  node --check $f"
+            node --check "$f"
+          done
+          echo "All JS files pass syntax check."
+
+  # --- 2. HTML validation with vnu-checker (W3C validator.nu) ---
+  html-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install vnu-checker
+        run: |
+          curl -sL "https://github.com/validator/validator/releases/download/latest/vnu.linux.zip" -o /tmp/vnu.zip
+          unzip -q /tmp/vnu.zip -d /tmp/vnu
+          echo "/tmp/vnu/vnu-runtime-image/bin" >> $GITHUB_PATH
+      - name: Validate HTML files
+        run: |
+          # vnu exits non-zero on real errors. --Werror is intentionally NOT used:
+          # it would promote info-level CSP advisories to failures. Those advisories
+          # are file:// validation artifacts (e.g. 'self' matches nothing for a local
+          # file, and JSON-LD inline data blocks are flagged), not production issues.
+          find . -name '*.html' -not -path './node_modules/*' -exec vnu {} +
+
+  # --- 3. Project-specific wiring check ---
+  wiring-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check page wiring
+        run: |
+          ERRORS=0
+
+          echo "=== Checking script tags ==="
+          for f in index.html bmi.html compound.html mortgage.html temperature.html apy.html; do
+            if [ ! -f "$f" ]; then
+              echo "  FAIL: $f is missing"
+              ERRORS=$((ERRORS+1))
+              continue
+            fi
+            if grep -q '<script src="script.js">' "$f"; then
+              echo "  OK: $f has script.js"
+            else
+              echo "  FAIL: $f missing <script src=\"script.js\">"
+              ERRORS=$((ERRORS+1))
+            fi
+            if grep -q 'id="nm-toggle"' "$f"; then
+              echo "  OK: $f has nm-toggle button"
+            else
+              echo "  FAIL: $f missing id=\"nm-toggle\""
+              ERRORS=$((ERRORS+1))
+            fi
+          done
+
+          echo ""
+          echo "=== Checking CSS link ==="
+          for f in index.html bmi.html compound.html mortgage.html temperature.html apy.html; do
+            if grep -q '<link rel="stylesheet" href="styles.css">' "$f"; then
+              echo "  OK: $f has styles.css"
+            else
+              echo "  FAIL: $f missing styles.css"
+              ERRORS=$((ERRORS+1))
+            fi
+          done
+
+          echo ""
+          echo "=== Summary ==="
+          if [ "$ERRORS" -eq 0 ]; then
+            echo "All wiring checks passed."
+            exit 0
+          else
+            echo "$ERRORS wiring error(s) found."
+            exit 1
+          fi
