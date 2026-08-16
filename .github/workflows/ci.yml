@@ -29,10 +29,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install vnu-checker
         run: |
-          VNU_VERSION="24.6.5"
-          curl -sL "https://github.com/validator/validator/releases/download/$VNU_VERSION/vnu-$VNU_VERSION.zip" -o /tmp/vnu.zip
+          curl -sL "https://github.com/validator/validator/releases/download/latest/vnu.linux.zip" -o /tmp/vnu.zip
           unzip -q /tmp/vnu.zip -d /tmp/vnu
-          echo "/tmp/vnu/vnu-$VNU_VERSION" >> $GITHUB_PATH
+          echo "/tmp/vnu/vnu-runtime-image/bin" >> $GITHUB_PATH
       - name: Validate HTML files
         run: |
           find . -name '*.html' -not -path './node_modules/*' -exec vnu --Werror {} +
@@ -59,10 +58,10 @@ jobs:
               echo "  FAIL: $f missing <script src=\"script.js\">"
               ERRORS=$((ERRORS+1))
             fi
-            if grep -q 'id="nightmode-toggle"' "$f"; then
-              echo "  OK: $f has nightmode-toggle button"
+            if grep -q 'id="nm-toggle"' "$f"; then
+              echo "  OK: $f has nm-toggle button"
             else
-              echo "  FAIL: $f missing id=\"nightmode-toggle\""
+              echo "  FAIL: $f missing id=\"nm-toggle\""
               ERRORS=$((ERRORS+1))
             fi
           done
