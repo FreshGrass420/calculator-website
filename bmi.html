@@ -12,6 +12,12 @@
     <meta name="revisit-after" content="7 days">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://gc.zgo.at; connect-src 'self' https://cloudflareinsights.com https://freshgrass420.goatcounter.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; frame-ancestors 'none';">
+    <!-- Resource hints: preconnect to the only external origins used (analytics beacons) -->
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <link rel="preconnect" href="https://gc.zgo.at" crossorigin>
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="dns-prefetch" href="https://gc.zgo.at">
+    <!-- End resource hints -->
     <!-- Open Graph -->
     <meta property="og:title" content="Free BMI Calculator Online - Body Mass Index | CalcBro">
     <meta property="og:description" content="Calculate your Body Mass Index (BMI) instantly. View health categories, BMI chart, and formula explanation. Free, fast, mobile-friendly.">
@@ -22,7 +28,9 @@
     <meta name="twitter:title" content="Free BMI Calculator Online - Body Mass Index | CalcBro">
     <meta name="twitter:description" content="Calculate your Body Mass Index (BMI) instantly. View health categories and BMI chart.">
     <link rel="canonical" href="https://freshgrass420.github.io/calculator-website/bmi.html">
+    <link rel="preload" href="styles.css" as="style">
     <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
     <!-- Structured Data: SoftwareApplication -->
     <script type="application/ld+json">
     {
@@ -222,7 +230,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
   <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "e698996f14194ecea9198e165afc4b70"}'></script>
 <!-- GoatCounter Analytics --><script data-goatcounter="https://freshgrass420.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>

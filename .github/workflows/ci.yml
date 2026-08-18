@@ -56,10 +56,10 @@ jobs:
               ERRORS=$((ERRORS+1))
               continue
             fi
-            if grep -q '<script src="script.js">' "$f"; then
+            if grep -qE '<script (defer )?src="script.js">' "$f"; then
               echo "  OK: $f has script.js"
             else
-              echo "  FAIL: $f missing <script src=\"script.js\">"
+              echo "  FAIL: $f missing <script src=\"script.js\"> (deferred form OK)"
               ERRORS=$((ERRORS+1))
             fi
             if grep -q 'id="nm-toggle"' "$f"; then
